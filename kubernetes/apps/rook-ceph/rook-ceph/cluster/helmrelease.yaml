@@ -91,20 +91,10 @@ spec:
         enabled: true
         urlPrefix: /
       storage:
-        useAllNodes: false
-        useAllDevices: false
+        useAllNodes: true
+        useAllDevices: true
         config:
           osdsPerDevice: "1"
-        nodes:
-          - name: "xerxes"
-            devices:
-              - name: "/dev/disk/by-id/nvme-CT1000P2SSD8_2225E63ED7D7"
-          - name: "shodan"
-            devices:
-              - name: "/dev/disk/by-id/nvme-CT1000P1SSD8_20452B5D0862"
-          - name: "icarus"
-            devices:
-              - name: "/dev/disk/by-id/nvme-KINGSTON_SNVS1000G_50026B7684F12095"
     ingress:
       dashboard:
         ingressClassName: "nginx"
