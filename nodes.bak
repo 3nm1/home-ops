@@ -1,0 +1,42 @@
+---
+nodes:
+  - name: "talos01"
+    address: "192.168.80.51"
+    controller: true
+    disk: "sda"
+    mac_addr: "bc:24:11:9a:ac:6e"
+    schematic_id: "376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba"
+    mtu: 1500
+    #secureboot: false
+    #encrypt_disk: false
+
+  - name: "talos02"
+    address: "192.168.80.52"
+    controller: true
+    disk: "sda"
+    mac_addr: "bc:24:11:e6:dd:1b"
+    schematic_id: "376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba"
+    mtu: 1500
+    #secureboot: false
+    #encrypt_disk: false
+
+  - name: "talos03"
+    address: "192.168.80.53"
+    controller: true
+    disk: "sda"
+    mac_addr: "bc:24:11:3e:8f:b7"
+    schematic_id: "376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba"
+    mtu: 1500
+    #secureboot: false
+    #encrypt_disk: false
+
+  - name: "talos04"
+    address: "192.168.80.54"
+    controller: false
+    disk: "sda"
+    mac_addr: "bc:24:11:80:6b:b2"
+    schematic_id: "376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba"
+    mtu: 1500
+    #secureboot: false
+    #encrypt_disk: false
+...

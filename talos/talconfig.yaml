@@ -6,7 +6,7 @@ talosVersion: v1.9.4
 kubernetesVersion: v1.32.2
 
 clusterName: kubernetes
-endpoint: https://192.168.80.244:6443
+endpoint: https://192.168.80.201:6443
 
 clusterPodNets:
   - "10.42.0.0/16"
@@ -15,7 +15,7 @@ clusterSvcNets:
 
 additionalApiServerCertSans: &sans
   - "127.0.0.1"
-  - "192.168.80.244"
+  - "192.168.80.201"
 additionalMachineCertSans: *sans
 
 # Disable built-in CNI to use Cilium
@@ -42,7 +42,7 @@ nodes:
             gateway: "192.168.80.1"
         mtu: 1500
         vip:
-          ip: "192.168.80.244"
+          ip: "192.168.80.201"
   - hostname: "talos02"
     ipAddress: "192.168.80.52"
     installDiskSelector:
@@ -62,7 +62,7 @@ nodes:
             gateway: "192.168.80.1"
         mtu: 1500
         vip:
-          ip: "192.168.80.244"
+          ip: "192.168.80.201"
   - hostname: "talos03"
     ipAddress: "192.168.80.53"
     installDiskSelector:
@@ -82,7 +82,7 @@ nodes:
             gateway: "192.168.80.1"
         mtu: 1500
         vip:
-          ip: "192.168.80.244"
+          ip: "192.168.80.201"
   - hostname: "talos04"
     ipAddress: "192.168.80.54"
     installDiskSelector:
