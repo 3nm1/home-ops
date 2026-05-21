@@ -106,10 +106,12 @@ You'll build some really cool stuff along the way. And your brain waves will exp
 ---
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f31f/512.gif" alt="🌟" width="30" height="30"> Stargazers
 
-<a href="https://star-history.com/#3nm1/home-ops&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=3nm1/home-ops&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=3nm1/home-ops&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=3nm1/home-ops&type=Date" />
-  </picture>
+## Star History
+
+<a href="https://www.star-history.com/?repos=3nm1%2Fhome-ops&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=3nm1/home-ops&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=3nm1/home-ops&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=3nm1/home-ops&type=date&legend=top-left" />
+ </picture>
 </a>
