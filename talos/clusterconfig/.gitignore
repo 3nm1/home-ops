@@ -1,0 +1,5 @@
+kubernetes-srv-talos01.yaml
+kubernetes-srv-talos02.yaml
+kubernetes-srv-talos03.yaml
+kubernetes-srv-talos04.yaml
+talosconfig
