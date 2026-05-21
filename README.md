@@ -1,8 +1,8 @@
 ```bash
-,     ,.  ,-.    |   ,--. .  .  ,-.  ,-.  ,---. ,-.   ,-.  .   ,   |   ,    , .   , ,--. 
-|    /  \ |  )   |   |    |\ | /    (   `   |   |  ) /   \ |\ /|   |   |    | |  /  |    
-|    |--| |-<    |   |-   | \| | -.  `-.    |   |-<  |   | | V |   |   |    | | /   |-   
-|    |  | |  )   |   |    |  | \  | .   )   |   |  \ \   / |   |   |   |    | |/    |    
+,     ,.  ,-.    |   ,--. .  .  ,-.  ,-.  ,---. ,-.   ,-.  .   ,   |   ,    , .   , ,--.
+|    /  \ |  )   |   |    |\ | /    (   `   |   |  ) /   \ |\ /|   |   |    | |  /  |
+|    |--| |-<    |   |-   | \| | -.  `-.    |   |-<  |   | | V |   |   |    | | /   |-
+|    |  | |  )   |   |    |  | \  | .   )   |   |  \ \   / |   |   |   |    | |/    |
 `--' '  ' `-'    |   `--' '  '  `-'  `-'    '   '  '  `-'  '   '   |   `--' ' '     `--'
 
 ```
@@ -38,7 +38,9 @@ No “just quickly logging in to fix something.”
 
 Talos forces me to behave like a responsible adult and manage everything declaratively.
 It’s GitOps‑friendly, predictable, and occasionally terrifying — in a good way.
+
 ---
+
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.gif" alt="🚀" width="30" height="30"> Kubernetes
 
 This home lab is my personal dojo for learning Kubernetes.
@@ -51,13 +53,17 @@ Kubernetes gives me:
 - a production‑ish environment
 
 - and a reason to explain to guests why the lights flicker when I reboot a node
+
 ---
+
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f30f/512.gif" alt="🌏" width="30" height="30"> Networking: Cilium
 
 Networking inside the cluster is powered by [Cilium](https://cilium.io/), because if I’m going to confuse myself with networking, I might as well use eBPF while I’m at it.
 
 Cilium gives me fast, modern networking and enough observability tools to feel like I’m running a small cloud provider.
+
 ---
+
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2699_fe0f/512.gif" alt="⚙️" width="30" height="30"> GitOps with Flux
 
 The backbone of this entire setup is [Flux CD](https://fluxcd.io/) — the GitOps controller that ensures my cluster always matches what’s in Git.
@@ -74,15 +80,12 @@ Flux is like a very strict librarian:
 
 Together with [Renovate](https://www.mend.io/renovate/), most updates happen automatically — sometimes faster than I can read the release notes.
 
-How it works
+### How it works
+
 Flux continuously compares the cluster state with Git.
 If something drifts, Flux fixes it.
 If I break something, Flux fixes it.
 If I think about making a manual change, Flux senses it and prepares to fix it.
-
-### How does it work?
-
-The core idea: **Git is the single source of truth**. Flux continuously compares what's in Git against what's running in the cluster, and corrects any difference — whether that's a new commit you pushed, or a "drift" caused by a manual change someone made directly on the cluster.
 
 <details>
   <summary>See Flux in action</summary>
@@ -121,7 +124,7 @@ flowchart TD
 ---
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6a7/512.gif" alt="🚧" width="30" height="30"> Foundation: onedr0p's Cluster Template
 
-Massive thanks to [onedr0p/cluster-template](https://github.com/onedr0p/cluster-template).  
+Massive thanks to [onedr0p/cluster-template](https://github.com/onedr0p/cluster-template).
 It gave me a clean, modern foundation for Talos + Flux and taught me how to structure manifests, use SOPS, and avoid turning my repo into a YAML graveyard.
 
 [![Flux Cluster Template](https://img.shields.io/badge/Cluster%20Template-1f6feb?style=for-the-badge)](https://github.com/onedr0p/cluster-template)
@@ -143,6 +146,7 @@ You’ll fix things.
 And eventually, you’ll end up explaining to your family why the TV stopped working because you “accidentally deleted the wrong VLAN.”
 
 ---
+
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f31f/512.gif" alt="🌟" width="30" height="30"> Stargazers
 
 ## Star History
