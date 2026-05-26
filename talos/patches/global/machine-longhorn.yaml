@@ -1,0 +1,8 @@
+machine:
+  install:
+    extensions:
+      - image: ghcr.io/siderolabs/iscsi-tools:v0.1.4
+
+  services:
+    iscsi:
+      enabled: true

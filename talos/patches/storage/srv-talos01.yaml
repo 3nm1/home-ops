@@ -1,0 +1,5 @@
+machine:
+  disks:
+    - device: /dev/sda   # ⚠️ verifiera detta!
+      partitions:
+        - mountpoint: /var/lib/longhorn
