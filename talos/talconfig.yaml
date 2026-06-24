@@ -47,6 +47,8 @@ nodes:
       secureboot: false
     talosImageURL: factory.talos.dev/installer/039535a70c3bd1667c355eca78571267704e55c8a24785033d183b8f26e39d82
     controlPlane: true
+    patches:
+      - "@./patches/storage/srv-talos02.yaml"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: "bc:24:11:85:85:38"

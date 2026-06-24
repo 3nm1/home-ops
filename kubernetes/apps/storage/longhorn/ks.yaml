@@ -10,6 +10,5 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
+    namespace: flux-system
   targetNamespace: longhorn-system
-  dependsOn:
-    - name: longhorn-namespace
