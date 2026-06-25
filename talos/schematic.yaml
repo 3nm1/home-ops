@@ -1,0 +1,10 @@
+# Talos Image Factory schematic — regenerate ID with:
+#   curl -s -X POST -H "Content-Type: text/plain" --data-binary @schematic.yaml https://factory.talos.dev/schematics
+customization:
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/i915
+      - siderolabs/intel-ucode
+      - siderolabs/mei
+      - siderolabs/iscsi-tools
+      - siderolabs/util-linux-tools

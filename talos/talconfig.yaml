@@ -24,7 +24,7 @@ nodes:
     installDisk: "/dev/sdb"
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/039535a70c3bd1667c355eca78571267704e55c8a24785033d183b8f26e39d82
+    talosImageURL: factory.talos.dev/installer/e8df334dd37f5ff7d7bd95b0915b6e4b1f548d47a66b4b007a6997e268e17d56
     controlPlane: true
     patches:
       - "@./patches/storage/srv-talos01.yaml"
@@ -45,7 +45,7 @@ nodes:
     installDisk: "/dev/sda"
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/039535a70c3bd1667c355eca78571267704e55c8a24785033d183b8f26e39d82
+    talosImageURL: factory.talos.dev/installer/e8df334dd37f5ff7d7bd95b0915b6e4b1f548d47a66b4b007a6997e268e17d56
     controlPlane: true
     patches:
       - "@./patches/storage/srv-talos02.yaml"
@@ -66,7 +66,7 @@ nodes:
     installDisk: "/dev/sda"
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/039535a70c3bd1667c355eca78571267704e55c8a24785033d183b8f26e39d82
+    talosImageURL: factory.talos.dev/installer/e8df334dd37f5ff7d7bd95b0915b6e4b1f548d47a66b4b007a6997e268e17d56
     controlPlane: true
     patches:
       - "@./patches/storage/srv-talos03.yaml"
@@ -87,7 +87,7 @@ nodes:
     installDisk: "/dev/sda"
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/039535a70c3bd1667c355eca78571267704e55c8a24785033d183b8f26e39d82
+    talosImageURL: factory.talos.dev/installer/e8df334dd37f5ff7d7bd95b0915b6e4b1f548d47a66b4b007a6997e268e17d56
     controlPlane: true
     patches:
       - "@./patches/storage/srv-talos04.yaml"
@@ -111,7 +111,6 @@ patches:
   - "@./patches/global/machine-network.yaml"
   - "@./patches/global/machine-sysctls.yaml"
   - "@./patches/global/machine-time.yaml"
-  - "@./patches/global/machine-longhorn.yaml"
 
 # Controller patches
 controlPlane:
