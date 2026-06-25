@@ -3,7 +3,3 @@ machine:
     extensions:
       - image: ghcr.io/siderolabs/iscsi-tools:v0.1.4
       - image: ghcr.io/siderolabs/util-linux-tools:v1.13.2
-
-  services:
-    iscsi:
-      enabled: true
