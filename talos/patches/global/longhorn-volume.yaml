@@ -4,4 +4,5 @@ name: longhorn
 provisioning:
   diskSelector:
     match: "!system_disk"
+  minSize: 1GiB
   grow: true
