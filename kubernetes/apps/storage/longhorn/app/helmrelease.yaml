@@ -16,7 +16,7 @@ spec:
   values:
     defaultSettings:
       defaultReplicaCount: 3   # ändra till 3 om du har >=3 noder
-      defaultDataPath: /var/lib/longhorn
+      defaultDataPath: /var/mnt/longhorn
       replicaNodeLevelSoftAntiAffinity: false
 
     persistence:

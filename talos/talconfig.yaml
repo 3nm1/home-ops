@@ -26,8 +26,6 @@ nodes:
       secureboot: false
     talosImageURL: factory.talos.dev/installer/e8df334dd37f5ff7d7bd95b0915b6e4b1f548d47a66b4b007a6997e268e17d56
     controlPlane: true
-    patches:
-      - "@./patches/storage/srv-talos01.yaml"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: "bc:24:11:ab:94:86"
@@ -47,8 +45,6 @@ nodes:
       secureboot: false
     talosImageURL: factory.talos.dev/installer/e8df334dd37f5ff7d7bd95b0915b6e4b1f548d47a66b4b007a6997e268e17d56
     controlPlane: true
-    patches:
-      - "@./patches/storage/srv-talos02.yaml"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: "bc:24:11:85:85:38"
@@ -68,8 +64,6 @@ nodes:
       secureboot: false
     talosImageURL: factory.talos.dev/installer/e8df334dd37f5ff7d7bd95b0915b6e4b1f548d47a66b4b007a6997e268e17d56
     controlPlane: true
-    patches:
-      - "@./patches/storage/srv-talos03.yaml"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: "bc:24:11:ac:12:32"
@@ -89,8 +83,6 @@ nodes:
       secureboot: false
     talosImageURL: factory.talos.dev/installer/e8df334dd37f5ff7d7bd95b0915b6e4b1f548d47a66b4b007a6997e268e17d56
     controlPlane: true
-    patches:
-      - "@./patches/storage/srv-talos04.yaml"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: "bc:24:11:9b:9c:fe"
@@ -111,6 +103,7 @@ patches:
   - "@./patches/global/machine-network.yaml"
   - "@./patches/global/machine-sysctls.yaml"
   - "@./patches/global/machine-time.yaml"
+  - "@./patches/global/longhorn-volume.yaml"
 
 # Controller patches
 controlPlane:
