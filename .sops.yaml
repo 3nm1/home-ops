@@ -1,9 +1,9 @@
 ---
 creation_rules:
-  - path_regex: talos/.*\.sops\.ya?ml
+  - path_regex: talos[\\/].*\.sops\.ya?ml
     mac_only_encrypted: true
     age: "age1a8vdr200sct5atefmhhaqnxac7us6dd50hwg8e3e85mcmcd4sdgqnljfjp"
-  - path_regex: (bootstrap|kubernetes)/.*\.sops\.ya?ml
+  - path_regex: (bootstrap|kubernetes)[\\/].*\.sops\.ya?ml
     encrypted_regex: "^(data|stringData)$"
     mac_only_encrypted: true
     age: "age1a8vdr200sct5atefmhhaqnxac7us6dd50hwg8e3e85mcmcd4sdgqnljfjp"
