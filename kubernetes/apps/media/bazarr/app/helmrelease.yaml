@@ -1,0 +1,89 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: bazarr
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: bazarr
+  interval: 1h
+  values:
+    controllers:
+      bazarr:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/bazarr
+              tag: 1.6.0
+            env:
+              BAZARR__PORT: &port 80
+              TZ: Europe/Stockholm
+            probes:
+              liveness: &probe
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/system/ping
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *probe
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: ["bazarr.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      config:
+        existingClaim: bazarr
+      movies:
+        type: nfs
+        server: 192.168.20.20
+        path: /mnt/Backup/data
+        globalMounts:
+          - path: /movies
+            subPath: media/movies
+      tv:
+        type: nfs
+        server: 192.168.20.20
+        path: /mnt/Backup/data
+        globalMounts:
+          - path: /tv
+            subPath: media/tv
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
