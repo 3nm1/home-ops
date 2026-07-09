@@ -55,7 +55,7 @@ spec:
         existingClaim: recyclarr
       config-file:
         type: configMap
-        identifier: recyclarr-configmap
+        name: recyclarr-configmap
         globalMounts:
           - path: /config/recyclarr.yml
             subPath: recyclarr.yml
