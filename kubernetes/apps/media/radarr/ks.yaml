@@ -6,7 +6,9 @@ metadata:
 spec:
   dependsOn:
     - name: external-secrets-stores
+      namespace: external-secrets
     - name: longhorn
+      namespace: flux-system
   interval: 1h
   path: ./kubernetes/apps/media/radarr/app
   postBuild:
