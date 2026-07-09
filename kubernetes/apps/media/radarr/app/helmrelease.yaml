@@ -81,20 +81,12 @@ spec:
     persistence:
       config:
         existingClaim: radarr
-      movies:
+      data:
         type: nfs
         server: 192.168.20.20
         path: /mnt/Backup/data
         globalMounts:
-          - path: /movies
-            subPath: media/movies
-      tv:
-        type: nfs
-        server: 192.168.20.20
-        path: /mnt/Backup/data
-        globalMounts:
-          - path: /tv
-            subPath: media/tv
+          - path: /data
       tmp:
         type: emptyDir
         globalMounts:

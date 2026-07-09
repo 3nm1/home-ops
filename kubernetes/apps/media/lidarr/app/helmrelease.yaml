@@ -78,13 +78,12 @@ spec:
     persistence:
       config:
         existingClaim: lidarr
-      music:
+      data:
         type: nfs
         server: 192.168.20.20
         path: /mnt/Backup/data
         globalMounts:
-          - path: /music
-            subPath: media/music
+          - path: /data
       tmp:
         type: emptyDir
         globalMounts:
