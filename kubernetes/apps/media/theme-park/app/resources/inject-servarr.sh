@@ -15,6 +15,12 @@ if [ -n "${TP_ADDON:-}" ]; then
   done
 fi
 
+if [ ! -d /app/bin/UI ]; then
+  echo "ERROR: /app/bin/UI not found in image" >&2
+  exit 1
+fi
+
+mkdir -p /ui
 cp -a /app/bin/UI/. /ui/
 
 for file in /ui/index.html /ui/login.html; do
