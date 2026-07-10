@@ -19,9 +19,16 @@ Learn modern infrastructure, automate everything, break things in creative ways,
 ---
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f916/512.gif" alt="🤖" width="30" height="30"> Hardware
 
-| System                   | Role           | CPU   | RAM   | Graphics | Disk (boot) | Disk (storage) |
-|--------------------------|----------------|-------|-------|----------|-------------|----------------|
-| To be updated            |
+| System     | Role                | CPU                | RAM  | Graphics                         | Disk (boot)    | Disk (storage)              |
+|------------|---------------------|--------------------|------|----------------------------------|----------------|-----------------------------|
+| px-node01  | Proxmox Node        | 1× Xeon E5-2697 v2 | 32GiB | Nvidia Quadro T400              | Kingston 120GB | 2× PNY 1TB                  |
+| px-node02  | Proxmox Node        | 2× Xeon E5-2690 v2 | 32GiB | -                               | Kingston 120GB | PNY 1TB, Kingston 1TB       |
+| px-node03  | Proxmox Node        | 2× Xeon E5504      | 32GiB | -                               | Kingston 120GB | PNY 1TB, Kingston 1TB       |
+| px-node04  | Proxmox Node        | 1× Xeon E5-2683 v4 | 48GiB | Nvidia Quadro P2000, Tesla K80  | WDC 120GB      | PNY 1TB, Kingston 1TB       |
+| srv-talos01| k3s Control Plane + Worker  | 4 vCPU             | 8GiB | -                               | vg_system 80GB | vg_storage 700GB            |
+| srv-talos02| k3s Control Plane + Worker  | 4 vCPU             | 8GiB | -                               | vg_system 80GB | vg_storage 700GB            |
+| srv-talos03| k3s Control Plane + Worker  | 4 vCPU             | 8GiB | -                               | vg_system 80GB | vg_storage 700GB            |
+| srv-talos04| k3s Control Plane + Worker  | 4 vCPU             | 8GiB | -                               | vg_system 80GB | vg_storage 700GB            |
 
 Everything is wired into a Cisco network with VLANs for IoT, Management, LAN, Servers, and Cameras — because nothing says “home” like enterprise‑grade segmentation.
 
