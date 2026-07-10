@@ -19,3 +19,4 @@ resources:
   - ./jellyfin/ks.yaml
   - ./deduparr/ks.yaml
   - ./seerr/ks.yaml
+  - ./theme-park/ks.yaml
