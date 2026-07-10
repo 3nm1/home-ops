@@ -13,6 +13,26 @@ spec:
       sonarr:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          theme:
+            image:
+              repository: ghcr.io/home-operations/sonarr
+              tag: 4.0.18.2978
+            command: ["/bin/sh", "/scripts/inject-servarr.sh"]
+            env:
+              TP_APP: sonarr
+              TP_HOSTNAME: sonarr.${SECRET_DOMAIN}
+              TP_THEME: hotpink
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 64Mi
         containers:
           app:
             image:
@@ -20,7 +40,6 @@ spec:
               tag: 4.0.18.2978
             env:
               SONARR__APP__INSTANCENAME: Sonarr
-              SONARR__APP__THEME: dark
               SONARR__AUTH__METHOD: External
               SONARR__AUTH__REQUIRED: DisabledForLocalAddresses
               SONARR__LOG__DBENABLED: "False"
@@ -78,6 +97,22 @@ spec:
     persistence:
       config:
         existingClaim: sonarr
+      scripts:
+        type: configMap
+        name: theme-park-inject
+        defaultMode: 493
+        advancedMounts:
+          sonarr:
+            theme:
+              - path: /scripts
+      ui:
+        type: emptyDir
+        advancedMounts:
+          sonarr:
+            theme:
+              - path: /ui
+            app:
+              - path: /app/bin/UI
       data:
         type: nfs
         server: 192.168.20.20

@@ -4,3 +4,11 @@ kind: Kustomization
 resources:
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+configMapGenerator:
+  - name: theme-park-inject
+    files:
+      - inject-servarr.sh=./resources/inject-servarr.sh
+      - inject-bazarr.sh=./resources/inject-bazarr.sh
+      - inject-sabnzbd.sh=./resources/inject-sabnzbd.sh
+generatorOptions:
+  disableNameSuffixHash: true

@@ -13,6 +13,26 @@ spec:
       lidarr:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          theme:
+            image:
+              repository: ghcr.io/home-operations/lidarr
+              tag: 3.1.3.4968
+            command: ["/bin/sh", "/scripts/inject-servarr.sh"]
+            env:
+              TP_APP: lidarr
+              TP_HOSTNAME: lidarr.${SECRET_DOMAIN}
+              TP_THEME: hotpink
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 64Mi
         containers:
           app:
             image:
@@ -20,7 +40,6 @@ spec:
               tag: 3.1.3.4968
             env:
               LIDARR__APP__INSTANCENAME: Lidarr
-              LIDARR__APP__THEME: dark
               LIDARR__AUTH__METHOD: External
               LIDARR__AUTH__REQUIRED: DisabledForLocalAddresses
               LIDARR__LOG__DBENABLED: "False"
@@ -78,6 +97,22 @@ spec:
     persistence:
       config:
         existingClaim: lidarr
+      scripts:
+        type: configMap
+        name: theme-park-inject
+        defaultMode: 493
+        advancedMounts:
+          lidarr:
+            theme:
+              - path: /scripts
+      ui:
+        type: emptyDir
+        advancedMounts:
+          lidarr:
+            theme:
+              - path: /ui
+            app:
+              - path: /app/bin/UI
       data:
         type: nfs
         server: 192.168.20.20

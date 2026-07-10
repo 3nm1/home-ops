@@ -13,6 +13,25 @@ spec:
       sabnzbd:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          theme:
+            image:
+              repository: ghcr.io/home-operations/sabnzbd
+              tag: 5.0.4
+            command: ["/bin/sh", "/scripts/inject-sabnzbd.sh"]
+            env:
+              TP_HOSTNAME: sabnzbd.${SECRET_DOMAIN}
+              TP_THEME: hotpink
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 64Mi
         containers:
           app:
             image:
@@ -73,6 +92,22 @@ spec:
     persistence:
       config:
         existingClaim: sabnzbd
+      scripts:
+        type: configMap
+        name: theme-park-inject
+        defaultMode: 493
+        advancedMounts:
+          sabnzbd:
+            theme:
+              - path: /scripts
+      ui:
+        type: emptyDir
+        advancedMounts:
+          sabnzbd:
+            theme:
+              - path: /ui
+            app:
+              - path: /app
       data:
         type: nfs
         server: 192.168.20.20
