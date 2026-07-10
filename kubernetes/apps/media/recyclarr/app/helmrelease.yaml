@@ -26,9 +26,21 @@ spec:
               tag: 8.6.0
             env:
               RECYCLARR_DATA_DIR: /tmp
-            envFrom:
-              - secretRef:
-                  name: recyclarr-secret
+              RADARR_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: radarr-secret
+                    key: RADARR__AUTH__APIKEY
+              RADARR4K_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: radarr4k-secret
+                    key: RADARR__AUTH__APIKEY
+              SONARR_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sonarr-secret
+                    key: SONARR__AUTH__APIKEY
             args:
               - sync
             securityContext:
