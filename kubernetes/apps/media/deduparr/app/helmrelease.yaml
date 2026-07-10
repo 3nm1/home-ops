@@ -1,0 +1,66 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: deduparr
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: deduparr
+  interval: 1h
+  values:
+    controllers:
+      deduparr:
+        containers:
+          app:
+            image:
+              repository: quay.io/kernald/deduparr
+              tag: 1.2.1
+            env:
+              DEDUPARR_LOG_LEVEL: info
+              DEDUPARR_RADARR_MOVIES_ENABLED: "true"
+              DEDUPARR_RADARR_MOVIES_URL: http://radarr.media.svc.cluster.local
+              DEDUPARR_REMOVE_FROM_CLIENT: "false"
+              DEDUPARR_SCHEDULE: service
+              DEDUPARR_SERVICE__INTERVAL: 2m
+              DEDUPARR_SERVICE__PORT: &port 80
+              DEDUPARR_SONARR_SERIES_ENABLED: "true"
+              DEDUPARR_SONARR_SERIES_URL: http://sonarr.media.svc.cluster.local
+              TZ: Europe/Stockholm
+            envFrom:
+              - secretRef:
+                  name: deduparr-secret
+            probes:
+              liveness: &probe
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health/ready
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *probe
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 128Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        ports:
+          http:
+            port: *port

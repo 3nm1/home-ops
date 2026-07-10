@@ -15,3 +15,6 @@ resources:
   - ./lidarr/ks.yaml
   - ./radarr/ks.yaml
   - ./recyclarr/ks.yaml
+  - ./jellyfin/ks.yaml
+  - ./deduparr/ks.yaml
+  - ./seerr/ks.yaml
