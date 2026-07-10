@@ -13,25 +13,6 @@ spec:
       bazarr:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          theme:
-            image:
-              repository: ghcr.io/home-operations/bazarr
-              tag: 1.6.0
-            command: ["/bin/sh", "/scripts/inject-bazarr.sh"]
-            env:
-              TP_HOSTNAME: bazarr.${SECRET_DOMAIN}
-              TP_THEME: hotpink
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false
-              capabilities: { drop: ["ALL"] }
-            resources:
-              requests:
-                cpu: 10m
-                memory: 64Mi
-              limits:
-                memory: 128Mi
         containers:
           app:
             image:
@@ -88,22 +69,6 @@ spec:
     persistence:
       config:
         existingClaim: bazarr
-      scripts:
-        type: configMap
-        name: theme-park-inject
-        defaultMode: 493
-        advancedMounts:
-          bazarr:
-            theme:
-              - path: /scripts
-      ui:
-        type: emptyDir
-        advancedMounts:
-          bazarr:
-            theme:
-              - path: /ui
-            app:
-              - path: /app/bin/frontend/build
       data:
         type: nfs
         server: 192.168.20.20

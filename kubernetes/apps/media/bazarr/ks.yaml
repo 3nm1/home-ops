@@ -9,7 +9,6 @@ spec:
       namespace: external-secrets
     - name: longhorn
       namespace: flux-system
-    - name: theme-park
   interval: 1h
   path: ./kubernetes/apps/media/bazarr/app
   postBuild:

@@ -13,26 +13,6 @@ spec:
       prowlarr:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          theme:
-            image:
-              repository: ghcr.io/home-operations/prowlarr
-              tag: 2.5.1.5460
-            command: ["/bin/sh", "/scripts/inject-servarr.sh"]
-            env:
-              TP_APP: prowlarr
-              TP_HOSTNAME: prowlarr.${SECRET_DOMAIN}
-              TP_THEME: hotpink
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false
-              capabilities: { drop: ["ALL"] }
-            resources:
-              requests:
-                cpu: 10m
-                memory: 64Mi
-              limits:
-                memory: 128Mi
         containers:
           app:
             image:
@@ -40,6 +20,7 @@ spec:
               tag: 2.5.1.5460
             env:
               PROWLARR__APP__INSTANCENAME: Prowlarr
+              PROWLARR__APP__THEME: dark
               PROWLARR__AUTH__METHOD: External
               PROWLARR__AUTH__REQUIRED: DisabledForLocalAddresses
               PROWLARR__LOG__DBENABLED: "False"
@@ -97,22 +78,6 @@ spec:
     persistence:
       config:
         existingClaim: prowlarr
-      scripts:
-        type: configMap
-        name: theme-park-inject
-        defaultMode: 493
-        advancedMounts:
-          prowlarr:
-            theme:
-              - path: /scripts
-      ui:
-        type: emptyDir
-        advancedMounts:
-          prowlarr:
-            theme:
-              - path: /ui
-            app:
-              - path: /app/bin/UI
       tmp:
         type: emptyDir
         globalMounts:

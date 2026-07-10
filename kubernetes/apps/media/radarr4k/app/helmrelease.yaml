@@ -13,27 +13,6 @@ spec:
       radarr4k:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          theme:
-            image:
-              repository: ghcr.io/home-operations/radarr
-              tag: 6.2.1.10461
-            command: ["/bin/sh", "/scripts/inject-servarr.sh"]
-            env:
-              TP_APP: radarr
-              TP_HOSTNAME: radarr4k.${SECRET_DOMAIN}
-              TP_THEME: hotpink
-              TP_ADDON: radarr-4k-logo
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false
-              capabilities: { drop: ["ALL"] }
-            resources:
-              requests:
-                cpu: 10m
-                memory: 64Mi
-              limits:
-                memory: 128Mi
         containers:
           app:
             image:
@@ -41,6 +20,7 @@ spec:
               tag: 6.2.1.10461
             env:
               RADARR__APP__INSTANCENAME: Radarr 4K
+              RADARR__APP__THEME: dark
               RADARR__AUTH__METHOD: External
               RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
               RADARR__LOG__DBENABLED: "False"
@@ -98,22 +78,6 @@ spec:
     persistence:
       config:
         existingClaim: radarr4k
-      scripts:
-        type: configMap
-        name: theme-park-inject
-        defaultMode: 493
-        advancedMounts:
-          radarr4k:
-            theme:
-              - path: /scripts
-      ui:
-        type: emptyDir
-        advancedMounts:
-          radarr4k:
-            theme:
-              - path: /ui
-            app:
-              - path: /app/bin/UI
       data:
         type: nfs
         server: 192.168.20.20
