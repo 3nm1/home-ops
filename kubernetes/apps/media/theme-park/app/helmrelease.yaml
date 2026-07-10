@@ -19,8 +19,6 @@ spec:
               repository: ghcr.io/themepark-dev/theme.park
               tag: 1.22.1
             env:
-              PGID: "1000"
-              PUID: "1000"
               TZ: Europe/Stockholm
             probes:
               liveness: &probe
@@ -35,9 +33,7 @@ spec:
                   failureThreshold: 5
               readiness: *probe
             securityContext:
-              allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
-              capabilities: { drop: ["ALL"] }
             resources:
               requests:
                 cpu: 10m
@@ -50,6 +46,23 @@ spec:
         runAsUser: 0
         runAsGroup: 0
         fsGroup: 0
+    persistence:
+      config:
+        type: emptyDir
+        globalMounts:
+          - path: /config
+      nginx:
+        type: emptyDir
+        globalMounts:
+          - path: /var/lib/nginx
+      run:
+        type: emptyDir
+        globalMounts:
+          - path: /run
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
     service:
       app:
         ports:
