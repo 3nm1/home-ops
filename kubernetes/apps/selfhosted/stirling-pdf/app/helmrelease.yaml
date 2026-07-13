@@ -20,6 +20,7 @@ spec:
               repository: docker.stirlingpdf.com/stirlingtools/stirling-pdf
               tag: 2.14.2
             env:
+              DISABLE_ADDITIONAL_FEATURES: "true"
               METRICS_ENABLED: "true"
               SECURITY_ENABLELOGIN: "false"
               SYSTEM_DEFAULTLOCALE: sv-SE
@@ -27,24 +28,41 @@ spec:
               TZ: Europe/Stockholm
               UI_APPNAME: Stirling PDF
             probes:
-              liveness: &probe
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: &port 8080
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 36
+              liveness:
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
                     path: /api/v1/info/status
-                    port: &port 8080
-                  initialDelaySeconds: 30
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
                   periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 5
-              readiness: *probe
             resources:
               requests:
-                cpu: 50m
-                memory: 512Mi
+                cpu: 100m
+                memory: 1Gi
               limits:
-                memory: 2Gi
+                memory: 3Gi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -77,11 +95,19 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /logs
-      tessdata:
+      custom-files:
         type: emptyDir
         globalMounts:
-          - path: /usr/share/tessdata
-      tmp:
+          - path: /customFiles
+      pipeline:
         type: emptyDir
         globalMounts:
-          - path: /tmp
+          - path: /pipeline
+      storage:
+        type: emptyDir
+        globalMounts:
+          - path: /storage
+      stirling-tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp/stirling-pdf
