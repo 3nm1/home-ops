@@ -18,6 +18,7 @@ spec:
             image:
               repository: ghcr.io/jellyfin/jellyfin
               tag: 10.11.11
+              digest: sha256:45f648c382a0c8b552582fcea40e95cb17c5d475473a891cba0eb7523fb92112
             env:
               DOTNET_SYSTEM_IO_DISABLEFILELOCKING: "true"
               JELLYFIN_FFmpeg__probesize: "50000000"
@@ -25,27 +26,46 @@ spec:
               TZ: Europe/Stockholm
               JELLYFIN_PublishedServerUrl: https://jellyfin.${SECRET_DOMAIN}
             probes:
-              liveness: &probe
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8096
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 30
+              liveness:
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
                     path: /health
                     port: &port 8096
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *port
                   periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 5
-              readiness: *probe
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
             resources:
               requests:
-                cpu: 100m
-                memory: 512Mi
+                cpu: 200m
+                memory: 1Gi
               limits:
-                memory: 4Gi
+                memory: 6Gi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -84,19 +104,15 @@ spec:
         globalMounts:
           - path: /data
       cache:
-        type: emptyDir
+        type: persistentVolumeClaim
+        existingClaim: jellyfin
         globalMounts:
           - path: /cache
+            subPath: cache
       transcode:
         type: emptyDir
         globalMounts:
           - path: /transcode
-      dri:
-        type: hostPath
-        hostPath: /dev/dri
-        globalMounts:
-          - path: /dev/dri
-            readOnly: true
       tmp:
         type: emptyDir
         globalMounts:
