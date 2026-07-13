@@ -9,5 +9,6 @@ resources:
   - ./kube-system
   - ./media
   - ./selfhosted
+  - ./security
   - ./network
   - ./storage
