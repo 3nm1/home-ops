@@ -1,0 +1,58 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: homarr
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: homarr
+  interval: 1h
+  values:
+    strategyType: Recreate
+    image:
+      repository: ghcr.io/homarr-labs/homarr
+      tag: v1.70.0
+    env:
+      TZ: Europe/Stockholm
+      LOG_LEVEL: info
+      AUTH_PROVIDERS: credentials
+    envSecrets:
+      dbEncryption:
+        existingSecret: homarr-secret
+        key: db-encryption-key
+    database:
+      type: sqlite
+    persistence:
+      homarrDatabase:
+        enabled: true
+        storageClassName: longhorn
+        size: 1Gi
+        accessMode: ReadWriteOnce
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        memory: 1Gi
+    readinessProbe:
+      initialDelaySeconds: 30
+      failureThreshold: 10
+    livenessProbe:
+      initialDelaySeconds: 30
+      failureThreshold: 10
+    httproute:
+      enabled: true
+      hostnames:
+        - homarr.${SECRET_DOMAIN}
+      parentRefs:
+        - name: envoy-internal
+          namespace: network
+          sectionName: https
+      rules:
+        - matches:
+            - path:
+                type: PathPrefix
+                value: /
+          backendRefs:
+            - port: 7575
