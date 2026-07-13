@@ -8,6 +8,10 @@ spec:
     kind: OCIRepository
     name: seerr
   interval: 1h
+  timeout: 10m
+  upgrade:
+    remediation:
+      retries: 3
   values:
     controllers:
       seerr:
@@ -17,11 +21,11 @@ spec:
         initContainers:
           oidc-config:
             image:
-              repository: docker.io/jqlang/jq
-              tag: "1.7.1"
+              repository: ghcr.io/seerr-team/seerr
+              tag: preview-new-oidc
             command:
-              - sh
-              - /scripts/merge-oidc.sh
+              - node
+              - /scripts/merge-oidc.js
             env:
               OIDC_ISSUER_URL: https://auth.${SECRET_DOMAIN}/application/o/seerr/
             envFrom:
@@ -46,7 +50,7 @@ spec:
               PORT: &port 80
               TZ: Europe/Stockholm
             probes:
-              liveness: &probe
+              startup:
                 enabled: true
                 custom: true
                 spec:
@@ -54,6 +58,16 @@ spec:
                     path: /api/v1/status
                     port: *port
                   periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 30
+              liveness: &probe
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/status
+                    port: *port
+                  periodSeconds: 30
                   timeoutSeconds: 5
                   failureThreshold: 5
               readiness: *probe

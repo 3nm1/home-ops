@@ -4,40 +4,40 @@ kind: ConfigMap
 metadata:
   name: seerr-oidc-merge
 data:
-  merge-oidc.sh: |
-    #!/bin/sh
-    set -eu
+  merge-oidc.js: |
+    const fs = require("node:fs");
 
-    SETTINGS="/app/config/settings.json"
+    const settingsPath = "/app/config/settings.json";
 
-    if [ ! -f "$SETTINGS" ]; then
-      echo "oidc-merge: settings.json missing, skipping"
-      exit 0
-    fi
+    if (!fs.existsSync(settingsPath)) {
+      console.log("oidc-merge: settings.json missing, skipping");
+      process.exit(0);
+    }
 
-    if [ -z "${OIDC_CLIENT_ID:-}" ] || [ -z "${OIDC_CLIENT_SECRET:-}" ]; then
-      echo "oidc-merge: OIDC credentials missing"
-      exit 1
-    fi
+    const clientId = process.env.OIDC_CLIENT_ID;
+    const clientSecret = process.env.OIDC_CLIENT_SECRET;
+    const issuer = process.env.OIDC_ISSUER_URL;
 
-    tmp="$(mktemp)"
-    jq \
-      --arg issuer "$OIDC_ISSUER_URL" \
-      --arg clientId "$OIDC_CLIENT_ID" \
-      --arg clientSecret "$OIDC_CLIENT_SECRET" \
-      '
-      .main.oidcLogin = true |
-      .oidc.providers = (
-        ((.oidc.providers // []) | map(select(.slug != "authentik"))) +
-        [{
-          slug: "authentik",
-          name: "authentik",
-          issuerUrl: $issuer,
-          clientId: $clientId,
-          clientSecret: $clientSecret,
-          newUserLogin: true
-        }]
-      )
-      ' "$SETTINGS" > "$tmp"
-    mv "$tmp" "$SETTINGS"
-    echo "oidc-merge: Authentik OIDC configured in settings.json"
+    if (!clientId || !clientSecret || !issuer) {
+      console.error("oidc-merge: OIDC credentials missing");
+      process.exit(1);
+    }
+
+    const data = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
+    if (!data.main) data.main = {};
+    data.main.oidcLogin = true;
+    if (!data.oidc) data.oidc = {};
+    const providers = (data.oidc.providers || []).filter(
+      (provider) => provider.slug !== "authentik",
+    );
+    providers.push({
+      slug: "authentik",
+      name: "authentik",
+      issuerUrl: issuer,
+      clientId,
+      clientSecret,
+      newUserLogin: true,
+    });
+    data.oidc.providers = providers;
+    fs.writeFileSync(settingsPath, `${JSON.stringify(data, null, 2)}\n`);
+    console.log("oidc-merge: Authentik OIDC configured in settings.json");
