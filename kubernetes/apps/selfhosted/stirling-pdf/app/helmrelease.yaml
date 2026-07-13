@@ -22,6 +22,8 @@ spec:
             env:
               DISABLE_ADDITIONAL_FEATURES: "true"
               METRICS_ENABLED: "true"
+              PGID: "1000"
+              PUID: "1000"
               SECURITY_ENABLELOGIN: "false"
               SYSTEM_DEFAULTLOCALE: sv-SE
               SYSTEM_MAXFILESIZE: "100"
@@ -65,9 +67,7 @@ spec:
                 memory: 3Gi
     defaultPodOptions:
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
+        runAsUser: 0
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
     service:
