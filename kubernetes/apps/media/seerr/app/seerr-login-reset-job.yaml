@@ -1,0 +1,64 @@
+# Reset Seerr login settings after failed OIDC experiment.
+# kubectl scale deployment seerr -n media --replicas=0
+# kubectl wait --for=delete pod -l app.kubernetes.io/name=seerr -n media --timeout=120s
+# kubectl apply -f seerr-login-reset-job.yaml
+# kubectl wait job/seerr-login-reset -n media --for=condition=complete --timeout=180s
+# kubectl logs -n media job/seerr-login-reset
+# kubectl delete job seerr-login-reset -n media
+# flux reconcile helmrelease seerr -n media --force
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seerr-login-reset
+  namespace: media
+spec:
+  ttlSecondsAfterFinished: 3600
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+        - name: reset
+          image: ghcr.io/seerr-team/seerr:v3.3.0
+          imagePullPolicy: IfNotPresent
+          command:
+            - node
+            - -e
+            - |
+              const fs = require("node:fs");
+              const settingsPath = "/app/config/settings.json";
+              if (!fs.existsSync(settingsPath)) {
+                console.error("login-reset: settings.json missing");
+                process.exit(1);
+              }
+              const data = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
+              data.main = data.main || {};
+              data.main.oidcLogin = false;
+              data.main.localLogin = true;
+              data.main.mediaServerLogin = true;
+              data.main.applicationUrl = "https://seerr.engstrom.live";
+              delete data.oidc;
+              fs.writeFileSync(settingsPath, JSON.stringify(data, null, 2) + "\n");
+              console.log("login-reset: removed OIDC and restored Jellyfin/local login");
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+          resources:
+            requests:
+              cpu: 10m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: seerr

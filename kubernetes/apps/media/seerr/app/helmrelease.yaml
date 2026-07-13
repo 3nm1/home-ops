@@ -8,16 +8,9 @@ spec:
     kind: OCIRepository
     name: seerr
   interval: 1h
-  timeout: 15m
-  upgrade:
-    disableWait: true
-    remediation:
-      retries: 0
-      remediateLastFailure: false
   values:
     controllers:
       seerr:
-        replicas: 1
         strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
@@ -25,23 +18,12 @@ spec:
           app:
             image:
               repository: ghcr.io/seerr-team/seerr
-              tag: preview-new-oidc
-              digest: sha256:a14a9c326881fdce70b00df3fc095f5b5b128f5552677f677cd3788e757fb4e6
+              tag: v3.3.0
             env:
               LOG_LEVEL: info
               PORT: &port 80
               TZ: Europe/Stockholm
             probes:
-              startup:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/v1/status
-                    port: *port
-                  periodSeconds: 10
-                  timeoutSeconds: 5
-                  failureThreshold: 60
               liveness: &probe
                 enabled: true
                 custom: true
@@ -49,7 +31,7 @@ spec:
                   httpGet:
                     path: /api/v1/status
                     port: *port
-                  periodSeconds: 30
+                  periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 5
               readiness: *probe
