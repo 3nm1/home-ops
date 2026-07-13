@@ -39,5 +39,5 @@ data:
       newUserLogin: true,
     });
     data.oidc.providers = providers;
-    fs.writeFileSync(settingsPath, `${JSON.stringify(data, null, 2)}\n`);
+    fs.writeFileSync(settingsPath, JSON.stringify(data, null, 2) + "\n");
     console.log("oidc-merge: Authentik OIDC configured in settings.json");
