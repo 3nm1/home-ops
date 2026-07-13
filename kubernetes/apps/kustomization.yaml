@@ -8,5 +8,6 @@ resources:
   - ./flux-system
   - ./kube-system
   - ./media
+  - ./selfhosted
   - ./network
   - ./storage
