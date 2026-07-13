@@ -1,0 +1,43 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: seerr-oidc-merge
+data:
+  merge-oidc.sh: |
+    #!/bin/sh
+    set -eu
+
+    SETTINGS="/app/config/settings.json"
+
+    if [ ! -f "$SETTINGS" ]; then
+      echo "oidc-merge: settings.json missing, skipping"
+      exit 0
+    fi
+
+    if [ -z "${OIDC_CLIENT_ID:-}" ] || [ -z "${OIDC_CLIENT_SECRET:-}" ]; then
+      echo "oidc-merge: OIDC credentials missing"
+      exit 1
+    fi
+
+    tmp="$(mktemp)"
+    jq \
+      --arg issuer "$OIDC_ISSUER_URL" \
+      --arg clientId "$OIDC_CLIENT_ID" \
+      --arg clientSecret "$OIDC_CLIENT_SECRET" \
+      '
+      .main.oidcLogin = true |
+      .oidc.providers = (
+        ((.oidc.providers // []) | map(select(.slug != "authentik"))) +
+        [{
+          slug: "authentik",
+          name: "authentik",
+          issuerUrl: $issuer,
+          clientId: $clientId,
+          clientSecret: $clientSecret,
+          newUserLogin: true
+        }]
+      )
+      ' "$SETTINGS" > "$tmp"
+    mv "$tmp" "$SETTINGS"
+    echo "oidc-merge: Authentik OIDC configured in settings.json"

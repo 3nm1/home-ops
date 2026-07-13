@@ -13,11 +13,40 @@ spec:
       seerr:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          oidc-config:
+            image:
+              repository: docker.io/jqlang/jq
+              tag: "1.7.1"
+            command:
+              - sh
+              - /scripts/merge-oidc.sh
+            env:
+              OIDC_ISSUER_URL: https://auth.${SECRET_DOMAIN}/application/o/seerr/
+              OIDC_CLIENT_ID:
+                valueFrom:
+                  secretKeyRef:
+                    name: seerr-oidc-secret
+                    key: OIDC_CLIENT_ID
+              OIDC_CLIENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: seerr-oidc-secret
+                    key: OIDC_CLIENT_SECRET
+            securityContext:
+              runAsUser: 1000
+              runAsGroup: 1000
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 64Mi
         containers:
           app:
             image:
               repository: ghcr.io/seerr-team/seerr
-              tag: v3.3.0
+              tag: preview-new-oidc
             env:
               LOG_LEVEL: info
               PORT: &port 80
@@ -75,6 +104,13 @@ spec:
         existingClaim: seerr
         globalMounts:
           - path: /app/config
+      oidc-merge:
+        type: configMap
+        identifier: seerr-oidc-merge
+        defaultMode: 493
+        globalMounts:
+          - path: /scripts
+            readOnly: true
       tmp:
         type: emptyDir
         globalMounts:
