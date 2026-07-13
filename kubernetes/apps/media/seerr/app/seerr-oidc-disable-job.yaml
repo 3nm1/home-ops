@@ -1,14 +1,16 @@
-# One-shot: scale Seerr to 0, apply this Job, wait for completion, then reconcile HelmRelease.
+# Emergency recovery when OIDC locks you out of Seerr.
 # kubectl scale deployment seerr -n media --replicas=0
 # kubectl wait --for=delete pod -l app.kubernetes.io/name=seerr -n media --timeout=120s
-# kubectl apply -f seerr-oidc-merge-job.yaml
-# kubectl wait job/seerr-oidc-merge -n media --for=condition=complete --timeout=180s
-# kubectl delete job seerr-oidc-merge -n media
+# kubectl apply -f seerr-oidc-disable-job.yaml
+# kubectl wait job/seerr-oidc-disable -n media --for=condition=complete --timeout=180s
+# kubectl logs -n media job/seerr-oidc-disable
+# kubectl delete job seerr-oidc-disable -n media
+# flux reconcile helmrelease seerr -n media --force
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: seerr-oidc-merge
+  name: seerr-oidc-disable
   namespace: media
 spec:
   ttlSecondsAfterFinished: 3600
@@ -20,22 +22,22 @@ spec:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
       containers:
-        - name: merge
+        - name: disable
           image: ghcr.io/seerr-team/seerr@sha256:a14a9c326881fdce70b00df3fc095f5b5b128f5552677f677cd3788e757fb4e6
           imagePullPolicy: IfNotPresent
           command:
             - node
-            - /scripts/merge-oidc.js
-          env:
-            - name: OIDC_ISSUER_URL
-              value: https://auth.engstrom.live/application/o/seerr/
-            - name: APPLICATION_URL
-              value: https://seerr.engstrom.live
-            - name: OIDC_LOGO_URL
-              value: https://auth.engstrom.live/static/dist/assets/icons/icon.svg
-          envFrom:
-            - secretRef:
-                name: seerr-oidc-secret
+            - -e
+            - |
+              const fs = require("node:fs");
+              const settingsPath = "/app/config/settings.json";
+              const data = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
+              data.main = data.main || {};
+              data.main.oidcLogin = false;
+              data.main.localLogin = true;
+              data.main.mediaServerLogin = true;
+              fs.writeFileSync(settingsPath, JSON.stringify(data, null, 2) + "\n");
+              console.log("oidc-disable: OIDC disabled, local and media server login restored");
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
@@ -44,9 +46,6 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /app/config
-            - name: scripts
-              mountPath: /scripts
-              readOnly: true
           resources:
             requests:
               cpu: 10m
@@ -57,7 +56,3 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: seerr
-        - name: scripts
-          configMap:
-            name: seerr-oidc-merge
-            defaultMode: 493

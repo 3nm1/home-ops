@@ -17,6 +17,8 @@ data:
     const clientId = process.env.OIDC_CLIENT_ID;
     const clientSecret = process.env.OIDC_CLIENT_SECRET;
     const issuer = process.env.OIDC_ISSUER_URL;
+    const applicationUrl = process.env.APPLICATION_URL;
+    const logoUrl = process.env.OIDC_LOGO_URL;
 
     if (!clientId || !clientSecret || !issuer) {
       console.error("oidc-merge: OIDC credentials missing");
@@ -26,6 +28,11 @@ data:
     const data = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
     if (!data.main) data.main = {};
     data.main.oidcLogin = true;
+    data.main.localLogin = true;
+    data.main.mediaServerLogin = true;
+    if (applicationUrl) {
+      data.main.applicationUrl = applicationUrl;
+    }
     if (!data.oidc) data.oidc = {};
     const providers = (data.oidc.providers || []).filter(
       (provider) => provider.slug !== "authentik",
@@ -36,8 +43,27 @@ data:
       issuerUrl: issuer,
       clientId,
       clientSecret,
+      logo: logoUrl || "",
       newUserLogin: true,
+      scopes: "openid email profile",
     });
     data.oidc.providers = providers;
     fs.writeFileSync(settingsPath, JSON.stringify(data, null, 2) + "\n");
     console.log("oidc-merge: Authentik OIDC configured in settings.json");
+  disable-oidc.js: |
+    const fs = require("node:fs");
+
+    const settingsPath = "/app/config/settings.json";
+
+    if (!fs.existsSync(settingsPath)) {
+      console.error("oidc-disable: settings.json missing");
+      process.exit(1);
+    }
+
+    const data = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
+    if (!data.main) data.main = {};
+    data.main.oidcLogin = false;
+    data.main.localLogin = true;
+    data.main.mediaServerLogin = true;
+    fs.writeFileSync(settingsPath, JSON.stringify(data, null, 2) + "\n");
+    console.log("oidc-disable: OIDC disabled, local and media server login restored");
