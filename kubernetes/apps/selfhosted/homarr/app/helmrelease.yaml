@@ -16,8 +16,20 @@ spec:
     env:
       TZ: Europe/Stockholm
       LOG_LEVEL: info
-      AUTH_PROVIDERS: credentials
+      BASE_URL: https://homarr.${SECRET_DOMAIN}
+      NEXTAUTH_URL: https://homarr.${SECRET_DOMAIN}
+      AUTH_TRUST_HOST: "true"
+      AUTH_PROVIDERS: credentials,oidc
+      AUTH_OIDC_ISSUER: https://auth.${SECRET_DOMAIN}/application/o/homarr/
+      AUTH_OIDC_CLIENT_NAME: Authentik
+      AUTH_OIDC_SCOPE_OVERWRITE: openid email profile groups
+      AUTH_OIDC_GROUPS_ATTRIBUTE: groups
+      AUTH_LOGOUT_REDIRECT_URL: https://auth.${SECRET_DOMAIN}/application/o/homarr/end-session/
     envSecrets:
+      authOidcCredentials:
+        existingSecret: homarr-secret
+        oidcClientId: oidc-client-id
+        oidcClientSecret: oidc-client-secret
       dbEncryption:
         existingSecret: homarr-secret
         key: db-encryption-key
