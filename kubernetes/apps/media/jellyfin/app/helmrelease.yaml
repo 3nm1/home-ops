@@ -23,6 +23,7 @@ spec:
               JELLYFIN_FFmpeg__probesize: "50000000"
               JELLYFIN_FFmpeg__analyzeduration: "50000000"
               TZ: Europe/Stockholm
+              JELLYFIN_PublishedServerUrl: https://jellyfin.${SECRET_DOMAIN}
             probes:
               liveness: &probe
                 enabled: true
@@ -62,6 +63,9 @@ spec:
         hostnames: ["jellyfin.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
+            namespace: network
+            sectionName: https
+          - name: envoy-external
             namespace: network
             sectionName: https
         rules:
