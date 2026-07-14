@@ -77,3 +77,10 @@ spec:
         ports:
           http:
             port: *port
+    serviceMonitor:
+      app:
+        enabled: true
+        endpoints:
+          - port: http
+            path: /metrics
+            interval: 30s
