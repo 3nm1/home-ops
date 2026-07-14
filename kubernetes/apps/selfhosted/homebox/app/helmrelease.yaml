@@ -1,0 +1,87 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: homebox
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: homebox
+  interval: 1h
+  values:
+    controllers:
+      homebox:
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/sysadminsmedia/homebox
+              tag: 0.23.1-rootless
+            env:
+              HBOX_LOG_FORMAT: text
+              HBOX_LOG_LEVEL: info
+              HBOX_MODE: production
+              HBOX_OPTIONS_ALLOW_ANALYTICS: "false"
+              HBOX_OPTIONS_ALLOW_REGISTRATION: "true"
+              HBOX_OPTIONS_CURRENCY: SEK
+              HBOX_WEB_MAX_UPLOAD_SIZE: "10"
+              TZ: Europe/Stockholm
+            envFrom:
+              - secretRef:
+                  name: homebox-secret
+            probes:
+              liveness: &probe
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/status
+                    port: &port 7745
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *probe
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: ["homebox.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      data:
+        existingClaim: homebox
+        globalMounts:
+          - path: /data
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
