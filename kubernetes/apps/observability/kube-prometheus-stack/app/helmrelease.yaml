@@ -69,6 +69,8 @@ spec:
           enabled: true
     prometheus:
       prometheusSpec:
+        externalLabels:
+          cluster: ${CLUSTER_NAME}
         enableAdminAPI: true
         podMonitorSelectorNilUsesHelmValues: false
         probeSelectorNilUsesHelmValues: false
