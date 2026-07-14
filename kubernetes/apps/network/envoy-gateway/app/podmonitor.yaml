@@ -4,15 +4,15 @@ kind: PodMonitor
 metadata:
   name: envoy-proxy
 spec:
-  jobLabel: envoy-proxy
+  jobLabel: proxy-stats
   namespaceSelector:
-    matchNames:
-      - network
-  podMetricsEndpoints:
-    - port: metrics
-      path: /stats/prometheus
-      honorLabels: true
+    any: true
   selector:
     matchLabels:
       app.kubernetes.io/component: proxy
       app.kubernetes.io/name: envoy
+  podMetricsEndpoints:
+    - path: /stats/prometheus
+      port: metrics
+      interval: 15s
+      honorLabels: true
