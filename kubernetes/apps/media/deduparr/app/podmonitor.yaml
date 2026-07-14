@@ -4,7 +4,7 @@ kind: PodMonitor
 metadata:
   name: deduparr
 spec:
-  jobLabel: deduparr
+  jobLabel: app.kubernetes.io/name
   namespaceSelector:
     matchNames:
       - media
