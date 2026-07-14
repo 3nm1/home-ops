@@ -5,3 +5,4 @@ resources:
   - ./longhorn/ks.yaml
   - ./minio-backup/ks.yaml
   - ./velero/ks.yaml
+  - ./velero/schedules/ks.yaml

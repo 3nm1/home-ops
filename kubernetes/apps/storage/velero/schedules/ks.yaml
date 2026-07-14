@@ -2,25 +2,20 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: velero
+  name: velero-schedules
   namespace: flux-system
 spec:
   dependsOn:
-    - name: external-secrets-stores
-      namespace: external-secrets
+    - name: velero
+      namespace: flux-system
   interval: 1h
-  path: ./kubernetes/apps/storage/velero/app
-  postBuild:
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
+  path: ./kubernetes/apps/storage/velero/schedules/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
   targetNamespace: velero
-  timeout: 15m
   wait: true
   healthChecks:
     - apiVersion: helm.toolkit.fluxcd.io/v2
