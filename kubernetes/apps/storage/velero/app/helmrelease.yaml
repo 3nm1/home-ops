@@ -1,0 +1,59 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: velero
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: velero
+      version: 12.1.0
+      sourceRef:
+        kind: HelmRepository
+        name: vmware-tanzu
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  values:
+    initContainers:
+      - name: velero-plugin-for-aws
+        image: velero/velero-plugin-for-aws:v1.12.2
+        volumeMounts:
+          - mountPath: /target
+            name: plugins
+    credentials:
+      useSecret: true
+      existingSecret: velero-credentials
+    configuration:
+      backupStorageLocation:
+        - name: default
+          provider: aws
+          bucket: velero
+          default: true
+          config:
+            region: minio
+            s3ForcePathStyle: "true"
+            s3Url: http://minio-backup.storage.svc.cluster.local:9000
+      defaultVolumesToFsBackup: true
+      features: EnableCSI
+    deployNodeAgent: true
+    nodeAgent:
+      podVolumePath: /var/lib/kubelet/pods
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          memory: 512Mi
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 512Mi

@@ -41,6 +41,11 @@ spec:
                   secretKeyRef:
                     name: sonarr-secret
                     key: SONARR__AUTH__APIKEY
+              SONARR4K_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sonarr4k-secret
+                    key: SONARR__AUTH__APIKEY
             args:
               - sync
             securityContext:

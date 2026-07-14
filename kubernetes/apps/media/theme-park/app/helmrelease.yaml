@@ -84,6 +84,7 @@ spec:
           - "radarr.${SECRET_DOMAIN}"
           - "radarr4k.${SECRET_DOMAIN}"
           - "sonarr.${SECRET_DOMAIN}"
+          - "sonarr4k.${SECRET_DOMAIN}"
           - "prowlarr.${SECRET_DOMAIN}"
           - "lidarr.${SECRET_DOMAIN}"
           - "bazarr.${SECRET_DOMAIN}"

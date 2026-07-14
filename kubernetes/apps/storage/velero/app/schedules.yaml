@@ -1,0 +1,39 @@
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: daily-media
+spec:
+  schedule: 0 2 * * *
+  template:
+    includedNamespaces:
+      - media
+    snapshotVolumes: false
+    defaultVolumesToFsBackup: true
+    ttl: 720h0m0s
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: daily-authentik
+spec:
+  schedule: 30 2 * * *
+  template:
+    includedNamespaces:
+      - authentik
+    snapshotVolumes: false
+    defaultVolumesToFsBackup: true
+    ttl: 720h0m0s
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: daily-selfhosted
+spec:
+  schedule: 0 3 * * *
+  template:
+    includedNamespaces:
+      - selfhosted
+    snapshotVolumes: false
+    defaultVolumesToFsBackup: true
+    ttl: 720h0m0s

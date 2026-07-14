@@ -83,6 +83,14 @@ spec:
             - name: envoy-external
               namespace: network
               sectionName: https
+          additionalRules:
+            - backendRefs:
+                - name: ak-outpost-authentik-embedded-outpost
+                  port: 9000
+              matches:
+                - path:
+                    type: PathPrefix
+                    value: /outpost.goauthentik.io
     worker:
       replicas: 1
       resources:

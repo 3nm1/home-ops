@@ -18,6 +18,7 @@ spec:
       defaultReplicaCount: 3
       defaultDataPath: /var/mnt/longhorn
       replicaNodeLevelSoftAntiAffinity: false
+      backupTarget: nfs://192.168.20.20:/mnt/NFS/longhorn
 
     persistence:
       defaultClass: true
