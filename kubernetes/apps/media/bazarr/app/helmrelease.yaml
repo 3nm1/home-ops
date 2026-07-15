@@ -63,6 +63,8 @@ spec:
               limits:
                 memory: 1Gi
     defaultPodOptions:
+      annotations:
+        backup.velero.io/backup-volumes-excludes: data,tmp
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
