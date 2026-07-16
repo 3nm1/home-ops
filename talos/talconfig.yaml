@@ -81,7 +81,7 @@ nodes:
     installDisk: "/dev/sda"
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/5cf9fc46dfdb24f01f8f7009dfe08a4c1590deb3c5887fba8bc3d03b6ce33711
+    talosImageURL: factory.talos.dev/installer/ee36a8b5d8c8099c7ac8daa8b50f172f4f3ab1380d754ebe5a089c3a42d05c8f
     controlPlane: true
     patches:
       - "@./patches/nodes/srv-talos04-nvidia.yaml"
