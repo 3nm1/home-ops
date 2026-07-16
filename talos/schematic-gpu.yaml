@@ -1,0 +1,10 @@
+# Talos Image Factory schematic for srv-talos04 (NVIDIA P2000) - regenerate ID with:
+#   curl -s -X POST -H "Content-Type: text/plain" --data-binary @schematic-gpu.yaml https://factory.talos.dev/schematics
+customization:
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/intel-ucode
+      - siderolabs/iscsi-tools
+      - siderolabs/util-linux-tools
+      - siderolabs/nvidia-open-gpu-kernel-modules
+      - siderolabs/nvidia-container-toolkit

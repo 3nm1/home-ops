@@ -66,9 +66,13 @@ spec:
                 memory: 1Gi
               limits:
                 memory: 6Gi
+                nvidia.com/gpu: 1
     defaultPodOptions:
       annotations:
         backup.velero.io/backup-volumes-excludes: data,tmp,cache
+      nodeSelector:
+        kubernetes.io/hostname: srv-talos04
+      runtimeClassName: nvidia
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
