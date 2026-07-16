@@ -22,7 +22,7 @@ log lvl msg *args:
 
 
 [group: 'template']
-mod template 'template'
+mod? template 'template'
 
 [doc('Render and validate configuration files')]
 [group('template')]
