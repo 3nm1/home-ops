@@ -158,8 +158,6 @@ And eventually, you’ll end up explaining to your family why the TV stopped wor
 
 ## Star History
 
-## Star History
-
 <a href="https://www.star-history.com/?repos=3nm1%2Fhome-ops&type=date&legend=top-left">
  <picture>
    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=3nm1/home-ops&type=date&theme=dark&legend=top-left&sealed_token=_cgMBgeBeKWfo8bVDy4rNtcFOpb8vbfNzVRlgGGrljj8NwKd4UlP1maORSgXQSGiiU6zY570efvO1tuB-EQvrrUxbHJ4XIjmdizqJB_y6J38hv2--D7Me8odOzZWa2yGHgGDyWTIwNNjkBW_7h0hCBj9D6CoZpjDT6g2MZcPcWia4EjawnJNj3jDa9oi" />
