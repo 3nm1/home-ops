@@ -134,6 +134,13 @@
       addLabels: ["renovate/helm"],
     },
     {
+      description: "Longhorn minor upgrades must be done manually (one minor at a time)",
+      matchDatasources: ["helm"],
+      matchDepNames: ["longhorn"],
+      matchUpdateTypes: ["major", "minor"],
+      enabled: false,
+    },
+    {
       matchManagers: ["github-actions"],
       addLabels: ["renovate/github-action"],
     },
