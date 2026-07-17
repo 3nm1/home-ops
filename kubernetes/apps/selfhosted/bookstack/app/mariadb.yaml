@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: lscr.io/linuxserver/mariadb
-              tag: 11.4.8
+              tag: 11.8.8
             env:
               PUID: "1000"
               PGID: "1000"
