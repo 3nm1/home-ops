@@ -23,7 +23,7 @@ spec:
           app:
             image:
               repository: ghcr.io/recyclarr/recyclarr
-              tag: 8.6.0
+              tag: 8.7.0
             env:
               RECYCLARR_DATA_DIR: /tmp
               RADARR_API_KEY:
