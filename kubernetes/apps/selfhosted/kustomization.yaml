@@ -12,3 +12,4 @@ resources:
   - ./stirling-pdf/ks.yaml
   - ./homarr/ks.yaml
   - ./homebox/ks.yaml
+  - ./bookstack/ks.yaml

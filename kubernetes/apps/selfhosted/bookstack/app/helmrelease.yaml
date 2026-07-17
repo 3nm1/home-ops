@@ -1,0 +1,116 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: bookstack
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: bookstack
+  interval: 1h
+  values:
+    controllers:
+      bookstack:
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          wait-for-mariadb:
+            image:
+              repository: docker.io/library/busybox
+              tag: "1.37"
+            command:
+              - sh
+              - -c
+              - until nc -z bookstack-mariadb 3306; do echo waiting for mariadb; sleep 2; done
+        containers:
+          app:
+            image:
+              repository: lscr.io/linuxserver/bookstack
+              tag: version-v26.05.1
+            env:
+              PUID: "1000"
+              PGID: "1000"
+              TZ: Europe/Stockholm
+              APP_URL: https://bookstack.${SECRET_DOMAIN}
+              DB_HOST: bookstack-mariadb
+              DB_PORT: "3306"
+              DB_USERNAME: bookstack
+              DB_DATABASE: bookstack
+              AUTH_METHOD: oidc
+              AUTH_AUTO_INITIATE: "false"
+              OIDC_NAME: Authentik
+              OIDC_DISPLAY_NAME_CLAIMS: name
+              OIDC_ISSUER: https://auth.${SECRET_DOMAIN}/application/o/bookstack/
+              OIDC_ISSUER_DISCOVER: "true"
+              OIDC_END_SESSION_ENDPOINT: "true"
+              OIDC_USER_TO_GROUPS: "true"
+              OIDC_GROUPS_CLAIM: groups
+            envFrom:
+              - secretRef:
+                  name: bookstack-secret
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 80
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 36
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                memory: 1Gi
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 0
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: bookstack
+        forceRename: bookstack
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: ["bookstack.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      config:
+        existingClaim: bookstack
+        globalMounts:
+          - path: /config

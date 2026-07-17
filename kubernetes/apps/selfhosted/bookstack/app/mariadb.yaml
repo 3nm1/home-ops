@@ -1,0 +1,81 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: bookstack-mariadb
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: bookstack
+  interval: 1h
+  values:
+    controllers:
+      bookstack-mariadb:
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: lscr.io/linuxserver/mariadb
+              tag: 11.4.8
+            env:
+              PUID: "1000"
+              PGID: "1000"
+              TZ: Europe/Stockholm
+              MYSQL_DATABASE: bookstack
+              MYSQL_USER: bookstack
+            envFrom:
+              - secretRef:
+                  name: bookstack-secret
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: &port 3306
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 30
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 512Mi
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 0
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: bookstack-mariadb
+        forceRename: bookstack-mariadb
+        ports:
+          mysql:
+            port: *port
+    persistence:
+      config:
+        existingClaim: bookstack-mariadb
+        globalMounts:
+          - path: /config
