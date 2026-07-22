@@ -1,0 +1,16 @@
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyExtensionPolicy
+metadata:
+  name: sonarr4k-themepark
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: sonarr4k
+  lua:
+    - type: ValueRef
+      valueRef:
+        group: v1
+        kind: ConfigMap
+        name: sonarr4k-themepark-lua
