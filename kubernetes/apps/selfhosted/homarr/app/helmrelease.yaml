@@ -20,7 +20,7 @@ spec:
       NEXTAUTH_URL: https://homarr.${SECRET_DOMAIN}
       AUTH_TRUST_HOST: "true"
       AUTH_PROVIDERS: credentials,oidc
-      AUTH_OIDC_ISSUER: https://auth.${SECRET_DOMAIN}/application/o/homarr/
+      AUTH_OIDC_ISSUER: https://auth.${SECRET_DOMAIN}/application/o/homarr
       AUTH_OIDC_CLIENT_NAME: Authentik
       AUTH_OIDC_SCOPE_OVERWRITE: openid email profile groups
       AUTH_OIDC_GROUPS_ATTRIBUTE: groups
@@ -44,14 +44,14 @@ spec:
     resources:
       requests:
         cpu: 50m
-        memory: 256Mi
+        memory: 512Mi
       limits:
         memory: 1Gi
     readinessProbe:
-      initialDelaySeconds: 30
+      initialDelaySeconds: 60
       failureThreshold: 10
     livenessProbe:
-      initialDelaySeconds: 30
+      initialDelaySeconds: 90
       failureThreshold: 10
     httproute:
       enabled: true
