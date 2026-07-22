@@ -33,7 +33,11 @@ reset-node ip:
 [doc('Upgrade Kubernetes')]
 [group('talos')]
 upgrade-k8s:
-    talhelper gencommand upgrade-k8s --extra-flags "--to '$(yq '.kubernetesVersion' talenv.yaml)'" | bash
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd "{{ justfile_directory() }}"
+    VERSION="$(grep '^kubernetesVersion:' talenv.yaml | awk '{print $2}')"
+    talhelper gencommand upgrade-k8s --extra-flags "--to ${VERSION}" | bash
 
 [doc('Upgrade Talos on a single node')]
 [group('talos')]

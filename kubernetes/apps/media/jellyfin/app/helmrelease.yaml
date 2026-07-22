@@ -73,6 +73,11 @@ spec:
         backup.velero.io/backup-volumes-excludes: data,tmp,cache
       nodeSelector:
         kubernetes.io/hostname: srv-talos04
+      tolerations:
+        - key: media.engstrom.live/gpu
+          operator: Equal
+          value: "true"
+          effect: NoSchedule
       runtimeClassName: nvidia
       securityContext:
         runAsNonRoot: true

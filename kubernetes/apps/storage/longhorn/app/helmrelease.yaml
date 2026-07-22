@@ -8,20 +8,22 @@ spec:
   chart:
     spec:
       chart: longhorn
-      version: 1.6.x
+      # Stay on 1.6.x until the cluster is stable; upgrade one minor at a time via PR.
+      version: 1.6.4
       sourceRef:
         kind: HelmRepository
         name: longhorn
 
   values:
     defaultSettings:
-      defaultReplicaCount: 3
+      defaultReplicaCount: 2
       defaultDataPath: /var/mnt/longhorn
-      replicaNodeLevelSoftAntiAffinity: false
+      replicaNodeLevelSoftAntiAffinity: true
       backupTarget: nfs://192.168.20.20:/mnt/NFS/longhorn
 
     persistence:
       defaultClass: true
+      defaultClassReplicaCount: 2
 
     metrics:
       serviceMonitor:
