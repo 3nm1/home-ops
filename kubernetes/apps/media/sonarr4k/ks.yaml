@@ -9,8 +9,6 @@ spec:
       namespace: external-secrets
     - name: longhorn
       namespace: flux-system
-    - name: theme-park
-      namespace: media
   interval: 1h
   path: ./kubernetes/apps/media/sonarr4k/app
   postBuild:
