@@ -36,13 +36,6 @@ data:
     ]]
 
       local updated = content
-      local head_pos = string.find(string.lower(updated), "</head>", 1, true)
-      if head_pos ~= nil then
-        updated = string.sub(updated, 1, head_pos - 1)
-          .. favicon_links
-          .. string.sub(updated, head_pos)
-      end
-
       local body_pos = string.find(string.lower(updated), "</body>", 1, true)
       if body_pos ~= nil then
         updated = string.sub(updated, 1, body_pos - 1)
