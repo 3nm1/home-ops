@@ -1,0 +1,16 @@
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyExtensionPolicy
+metadata:
+  name: radarr4k-themepark
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: radarr4k
+  lua:
+    - type: ValueRef
+      valueRef:
+        group: v1
+        kind: ConfigMap
+        name: radarr4k-themepark-lua
