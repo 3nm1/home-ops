@@ -27,6 +27,14 @@ spec:
     operator:
       nodeSelector:
         nvidia.com/gpu.present: "true"
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+        - key: media.engstrom.live/gpu
+          operator: Equal
+          value: "true"
+          effect: NoSchedule
     daemonsets:
       labels:
         app.kubernetes.io/part-of: gpu-operator
