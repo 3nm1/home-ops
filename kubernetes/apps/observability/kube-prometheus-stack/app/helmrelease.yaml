@@ -33,6 +33,8 @@ spec:
       enabled: true
       deploymentStrategy:
         type: Recreate
+      initChownData:
+        enabled: false
       admin:
         existingSecret: grafana-admin
         userKey: admin-user
