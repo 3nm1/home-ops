@@ -1,0 +1,51 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: seerr-themepark-lua
+data:
+  lua: |
+    function envoy_on_request(request_handle)
+      -- Ensure upstream HTML is uncompressed so the response body can be rewritten.
+      request_handle:headers():remove("accept-encoding")
+    end
+
+    function envoy_on_response(response_handle)
+      local content_type = response_handle:headers():get("content-type")
+      if content_type == nil or not string.find(string.lower(content_type), "text/html", 1, true) then
+        return
+      end
+
+      local status = response_handle:headers():get(":status")
+      if status == nil or not string.find(status, "^2", 1) then
+        return
+      end
+
+      local body = response_handle:body()
+      if body == nil or body:length() == 0 then
+        return
+      end
+
+      local content = tostring(body:getBytes(0, body:length()))
+      if content == nil or content == "" then
+        return
+      end
+
+      local theme_links = [[
+    <link rel="stylesheet" type="text/css" href="/css/base/seerr/hotline.css">
+    ]]
+
+      local updated = content
+      local body_pos = string.find(string.lower(updated), "</body>", 1, true)
+      if body_pos ~= nil then
+        updated = string.sub(updated, 1, body_pos - 1)
+          .. theme_links
+          .. string.sub(updated, body_pos)
+      end
+
+      if updated ~= content then
+        body:setBytes(updated)
+        response_handle:headers():remove("content-length")
+        response_handle:headers():remove("content-encoding")
+      end
+    end

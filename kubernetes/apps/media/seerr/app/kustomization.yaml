@@ -7,3 +7,5 @@ resources:
   - ./pvc.yaml
   - ./externalsecret.yaml
   - ./configmap.yaml
+  - ./themepark-lua-configmap.yaml
+  - ./envoyextensionpolicy.yaml
