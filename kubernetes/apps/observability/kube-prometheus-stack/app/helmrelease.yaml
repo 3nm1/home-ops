@@ -70,7 +70,7 @@ spec:
     prometheus:
       prometheusSpec:
         externalLabels:
-          cluster: ${CLUSTER_NAME}
+          cluster: kubernetes
         enableAdminAPI: true
         podMonitorSelectorNilUsesHelmValues: false
         probeSelectorNilUsesHelmValues: false
