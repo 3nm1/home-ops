@@ -32,7 +32,7 @@ data:
       end
 
       local theme_links = [[
-    <link rel="stylesheet" type="text/css" href="/css/base/seerr/hotline.css">
+    <link rel="stylesheet" type="text/css" href="/css/base/overseerr/hotline.css">
     ]]
 
       local updated = content
