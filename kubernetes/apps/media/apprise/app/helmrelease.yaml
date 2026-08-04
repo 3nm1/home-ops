@@ -14,6 +14,15 @@ spec:
         strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          init-dirs:
+            image:
+              repository: docker.io/library/busybox
+              tag: "1.38"
+            command:
+              - sh
+              - -c
+              - mkdir -p /data/plugin /data/attach
         containers:
           app:
             image:
@@ -23,14 +32,25 @@ spec:
               TZ: Europe/Stockholm
               APPRISE_STATEFUL_MODE: simple
               APPRISE_ADMIN: "y"
+              APPRISE_WORKER_COUNT: "1"
             probes:
-              liveness:
+              startup:
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
                     path: /
                     port: &port 8000
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 30
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
                   periodSeconds: 30
                   timeoutSeconds: 5
                   failureThreshold: 5
@@ -78,6 +98,12 @@ spec:
               - identifier: app
                 port: *port
     persistence:
+      data:
+        existingClaim: apprise
+        advancedMounts:
+          apprise:
+            init-dirs:
+              - path: /data
       config:
         existingClaim: apprise
         globalMounts:
@@ -94,5 +120,11 @@ spec:
             subPath: attach
       tmp:
         type: emptyDir
+        medium: Memory
+        sizeLimit: 256Mi
         globalMounts:
           - path: /tmp
+      run:
+        type: emptyDir
+        globalMounts:
+          - path: /run

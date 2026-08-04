@@ -27,6 +27,16 @@ spec:
               ORIGIN: https://profilarr.${SECRET_DOMAIN}
               PORT: &port 6868
             probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/health
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 30
               liveness:
                 enabled: true
                 custom: true
@@ -49,7 +59,7 @@ spec:
                   failureThreshold: 5
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
+              readOnlyRootFilesystem: false
               capabilities: { drop: ["ALL"] }
             resources:
               requests:
@@ -87,5 +97,11 @@ spec:
           - path: /config
       tmp:
         type: emptyDir
+        medium: Memory
+        sizeLimit: 512Mi
         globalMounts:
           - path: /tmp
+      run:
+        type: emptyDir
+        globalMounts:
+          - path: /run

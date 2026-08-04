@@ -33,6 +33,7 @@ spec:
               PUID: "1000"
               PGID: "1000"
               WEBUI_PORTS: 3030/tcp
+              S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: "1"
             probes:
               liveness:
                 enabled: true
@@ -97,3 +98,7 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /tmp
+      run:
+        type: emptyDir
+        globalMounts:
+          - path: /run
