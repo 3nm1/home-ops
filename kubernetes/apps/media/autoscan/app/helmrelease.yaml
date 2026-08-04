@@ -14,6 +14,15 @@ spec:
         strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          config-init:
+            image:
+              repository: docker.io/library/busybox
+              tag: "1.38"
+            command:
+              - sh
+              - -c
+              - cp /secrets/config.yml /config/config.yml
         containers:
           app:
             image:
@@ -23,13 +32,13 @@ spec:
               TZ: Europe/Stockholm
               PUID: "1000"
               PGID: "1000"
+              WEBUI_PORTS: 3030/tcp
             probes:
               liveness:
                 enabled: true
                 custom: true
                 spec:
-                  httpGet:
-                    path: /health
+                  tcpSocket:
                     port: &port 3030
                   periodSeconds: 30
                   timeoutSeconds: 5
@@ -38,15 +47,14 @@ spec:
                 enabled: true
                 custom: true
                 spec:
-                  httpGet:
-                    path: /health
+                  tcpSocket:
                     port: *port
                   periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 5
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
+              readOnlyRootFilesystem: false
               capabilities: { drop: ["ALL"] }
             resources:
               requests:
@@ -68,11 +76,17 @@ spec:
             port: *port
     persistence:
       config:
+        existingClaim: autoscan
+        globalMounts:
+          - path: /config
+      config-secret:
         type: secret
         name: autoscan-config
-        globalMounts:
-          - path: /config/config.yaml
-            subPath: config.yaml
+        advancedMounts:
+          autoscan:
+            config-init:
+              - path: /secrets
+                readOnly: true
       data:
         type: nfs
         server: 192.168.20.20

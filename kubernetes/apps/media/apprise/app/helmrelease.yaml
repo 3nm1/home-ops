@@ -18,9 +18,11 @@ spec:
           app:
             image:
               repository: caronc/apprise
-              tag: v1.9.3.0
+              tag: v1.5.1
             env:
               TZ: Europe/Stockholm
+              APPRISE_STATEFUL_MODE: simple
+              APPRISE_ADMIN: "y"
             probes:
               liveness:
                 enabled: true
