@@ -2,24 +2,19 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: authentik-forward-auth
+  name: unpackerr
 spec:
   dependsOn:
-    - name: authentik
-      namespace: authentik
+    - name: external-secrets-stores
+      namespace: external-secrets
     - name: sonarr
     - name: sonarr4k
     - name: radarr
     - name: radarr4k
-    - name: prowlarr
     - name: lidarr
-    - name: bazarr
     - name: sabnzbd
-    - name: maintainerr
-    - name: profilarr
-    - name: apprise
   interval: 1h
-  path: ./kubernetes/apps/media/authentik-forward-auth/app
+  path: ./kubernetes/apps/media/unpackerr/app
   postBuild:
     substituteFrom:
       - name: cluster-secrets

@@ -21,4 +21,9 @@ resources:
   - ./deduparr/ks.yaml
   - ./seerr/ks.yaml
   - ./theme-park/ks.yaml
+  - ./unpackerr/ks.yaml
+  - ./autoscan/ks.yaml
+  - ./maintainerr/ks.yaml
+  - ./profilarr/ks.yaml
+  - ./apprise/ks.yaml
   - ./authentik-forward-auth/ks.yaml
