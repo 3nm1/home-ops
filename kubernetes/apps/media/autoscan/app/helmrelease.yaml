@@ -26,14 +26,10 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/hotio/autoscan
-              tag: release-1.4.0
+              repository: docker.io/cloudb0x/autoscan
+              tag: 1.4.0
             env:
               TZ: Europe/Stockholm
-              PUID: "1000"
-              PGID: "1000"
-              WEBUI_PORTS: 3030/tcp
-              S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: "1"
             probes:
               liveness:
                 enabled: true
@@ -65,6 +61,9 @@ spec:
                 memory: 256Mi
     defaultPodOptions:
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
     service:
@@ -95,7 +94,3 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /tmp
-      run:
-        type: emptyDir
-        globalMounts:
-          - path: /run
