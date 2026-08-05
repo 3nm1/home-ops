@@ -31,6 +31,7 @@ spec:
             env:
               TZ: Europe/Stockholm
               AUTH: "off"
+              HOST: "0.0.0.0"
               ORIGIN: https://profilarr.${SECRET_DOMAIN}
               PORT: &port 6868
             probes:
@@ -39,27 +40,27 @@ spec:
                 custom: true
                 spec:
                   httpGet:
-                    path: /api/health
+                    path: /api/v1/health
                     port: *port
                   periodSeconds: 10
                   timeoutSeconds: 5
-                  failureThreshold: 30
+                  failureThreshold: 60
               liveness:
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
-                    path: /api/health
+                    path: /api/v1/health
                     port: *port
-                  periodSeconds: 30
-                  timeoutSeconds: 5
-                  failureThreshold: 5
+                  periodSeconds: 60
+                  timeoutSeconds: 10
+                  failureThreshold: 10
               readiness:
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
-                    path: /api/health
+                    path: /api/v1/health
                     port: *port
                   periodSeconds: 10
                   timeoutSeconds: 5
