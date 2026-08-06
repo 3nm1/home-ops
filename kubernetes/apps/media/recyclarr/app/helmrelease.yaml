@@ -11,6 +11,7 @@ spec:
   values:
     controllers:
       recyclarr:
+        enabled: false
         type: cronjob
         cronjob:
           schedule: 0 0 * * *
