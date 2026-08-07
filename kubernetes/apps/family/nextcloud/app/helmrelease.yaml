@@ -1,0 +1,192 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nextcloud
+spec:
+  interval: 1h
+  timeout: 15m
+  chart:
+    spec:
+      chart: nextcloud
+      version: 9.2.2
+      sourceRef:
+        kind: HelmRepository
+        name: nextcloud
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    global:
+      security:
+        allowInsecureImages: true
+
+    image:
+      flavor: apache
+
+    replicaCount: 1
+
+    httpRoute:
+      enabled: true
+      hostnames:
+        - cloud.${SECRET_DOMAIN}
+      parentRefs:
+        - name: envoy-internal
+          namespace: network
+          sectionName: https
+      wellKnown:
+        enabled: true
+
+    ingress:
+      enabled: false
+
+    phpClientHttpsFix:
+      enabled: true
+      protocol: https
+
+    nextcloud:
+      host: cloud.${SECRET_DOMAIN}
+      username: admin
+      existingSecret:
+        enabled: true
+        secretName: nextcloud-secret
+        usernameKey: nextcloud-username
+        passwordKey: nextcloud-password
+      persistence:
+        trustedDomains:
+          - cloud.${SECRET_DOMAIN}
+      strategy:
+        type: Recreate
+      extraEnv:
+        - name: OIDC_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud-secret
+              key: OIDC_CLIENT_ID
+        - name: OIDC_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud-secret
+              key: OIDC_CLIENT_SECRET
+        - name: OIDC_DISCOVERY_URI
+          value: https://auth.${SECRET_DOMAIN}/application/o/nextcloud/.well-known/openid-configuration
+      configs:
+        proxy.config.php: |-
+          <?php
+          $CONFIG = array (
+            'overwritehost' => 'cloud.${SECRET_DOMAIN}',
+            'overwriteprotocol' => 'https',
+            'overwrite.cli.url' => 'https://cloud.${SECRET_DOMAIN}',
+            'trusted_proxies' => array(
+              0 => '10.0.0.0/8',
+              1 => '172.16.0.0/12',
+              2 => '192.168.0.0/16',
+            ),
+            'allow_local_remote_servers' => true,
+          );
+        oidc.config.php: |-
+          <?php
+          $CONFIG = array (
+            'user_oidc' => array(
+              'default_token_endpoint_auth_method' => 'client_secret_post',
+            ),
+          );
+      hooks:
+        post-installation: |-
+          #!/bin/bash
+          set -euo pipefail
+          occ() { run_as www-data php occ "$@"; }
+          if ! occ app:list | grep -qE 'user_oidc.*enabled'; then
+            occ app:install user_oidc || true
+            occ app:enable user_oidc
+          fi
+          if [ -n "${OIDC_CLIENT_ID:-}" ] && [ -n "${OIDC_CLIENT_SECRET:-}" ] && [ -n "${OIDC_DISCOVERY_URI:-}" ]; then
+            occ user_oidc:provider authentik \
+              --clientid="${OIDC_CLIENT_ID}" \
+              --clientsecret="${OIDC_CLIENT_SECRET}" \
+              --discoveryuri="${OIDC_DISCOVERY_URI}" \
+              || true
+            occ config:app:set --type=string --value=0 user_oidc allow_multiple_user_backends || true
+          fi
+        post-upgrade: |-
+          #!/bin/bash
+          set -euo pipefail
+          occ() { run_as www-data php occ "$@"; }
+          if ! occ app:list | grep -qE 'user_oidc.*enabled'; then
+            occ app:install user_oidc || true
+            occ app:enable user_oidc
+          fi
+      extraVolumes:
+        - name: nextcloud-data
+          nfs:
+            server: 192.168.20.20
+            path: /mnt/NFS/family/nextcloud
+      extraVolumeMounts:
+        - name: nextcloud-data
+          mountPath: /var/www/html/data
+
+    internalDatabase:
+      enabled: false
+
+    postgresql:
+      enabled: true
+      image:
+        registry: docker.io
+        repository: bitnamilegacy/postgresql
+      global:
+        postgresql:
+          auth:
+            username: nextcloud
+            database: nextcloud
+            existingSecret: nextcloud-secret
+            secretKeys:
+              adminPasswordKey: postgres-password
+              userPasswordKey: password
+      primary:
+        persistence:
+          enabled: true
+          existingClaim: nextcloud-postgresql
+
+    mariadb:
+      enabled: false
+
+    redis:
+      enabled: false
+
+    collabora:
+      enabled: false
+
+    persistence:
+      enabled: true
+      existingClaim: nextcloud
+
+    startupProbe:
+      enabled: true
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 36
+
+    livenessProbe:
+      enabled: true
+      initialDelaySeconds: 30
+      periodSeconds: 15
+      timeoutSeconds: 5
+      failureThreshold: 5
+
+    readinessProbe:
+      enabled: true
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 5
+
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        memory: 2Gi

@@ -1,0 +1,26 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: nextcloud
+spec:
+  dependsOn:
+    - name: external-secrets-stores
+      namespace: external-secrets
+    - name: longhorn
+      namespace: flux-system
+    - name: authentik
+      namespace: authentik
+  interval: 1h
+  path: ./kubernetes/apps/family/nextcloud/app
+  postBuild:
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: family
+  wait: false
