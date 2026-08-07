@@ -60,6 +60,8 @@ spec:
           - cloud.${SECRET_DOMAIN}
       strategy:
         type: Recreate
+      podSecurityContext:
+        fsGroup: 33
       extraEnv:
         - name: OIDC_CLIENT_ID
           valueFrom:
@@ -103,11 +105,11 @@ spec:
             occ app:install user_oidc || true
             occ app:enable user_oidc
           fi
-          if [ -n "${OIDC_CLIENT_ID:-}" ] && [ -n "${OIDC_CLIENT_SECRET:-}" ] && [ -n "${OIDC_DISCOVERY_URI:-}" ]; then
+          if [ -n "$${OIDC_CLIENT_ID:-}" ] && [ -n "$${OIDC_CLIENT_SECRET:-}" ] && [ -n "$${OIDC_DISCOVERY_URI:-}" ]; then
             occ user_oidc:provider authentik \
-              --clientid="${OIDC_CLIENT_ID}" \
-              --clientsecret="${OIDC_CLIENT_SECRET}" \
-              --discoveryuri="${OIDC_DISCOVERY_URI}" \
+              --clientid="$${OIDC_CLIENT_ID}" \
+              --clientsecret="$${OIDC_CLIENT_SECRET}" \
+              --discoveryuri="$${OIDC_DISCOVERY_URI}" \
               || true
             occ config:app:set --type=string --value=0 user_oidc allow_multiple_user_backends || true
           fi
@@ -119,6 +121,23 @@ spec:
             occ app:install user_oidc || true
             occ app:enable user_oidc
           fi
+      extraInitContainers:
+        - name: fix-nfs-data-permissions
+          image: docker.io/library/busybox:1.38
+          command:
+            - sh
+            - -c
+            - |
+              if [ ! -d /var/www/html/data ]; then
+                mkdir -p /var/www/html/data
+              fi
+              chown -R 33:33 /var/www/html/data
+              chmod 750 /var/www/html/data
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: nextcloud-data
+              mountPath: /var/www/html/data
       extraVolumes:
         - name: nextcloud-data
           nfs:
