@@ -4,5 +4,6 @@ kind: Kustomization
 resources:
   - ./helmrepository.yaml
   - ./externalsecret.yaml
+  - ./nfs-pv.yaml
   - ./pvc.yaml
   - ./helmrelease.yaml

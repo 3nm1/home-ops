@@ -128,9 +128,7 @@ spec:
             - sh
             - -c
             - |
-              if [ ! -d /var/www/html/data ]; then
-                mkdir -p /var/www/html/data
-              fi
+              mkdir -p /var/www/html/data
               chown -R 33:33 /var/www/html/data
               chmod 750 /var/www/html/data
           securityContext:
@@ -138,14 +136,7 @@ spec:
           volumeMounts:
             - name: nextcloud-data
               mountPath: /var/www/html/data
-      extraVolumes:
-        - name: nextcloud-data
-          nfs:
-            server: 192.168.20.20
-            path: /mnt/NFS/family/nextcloud
-      extraVolumeMounts:
-        - name: nextcloud-data
-          mountPath: /var/www/html/data
+              subPath: data
 
     internalDatabase:
       enabled: false
@@ -181,6 +172,9 @@ spec:
     persistence:
       enabled: true
       existingClaim: nextcloud
+      nextcloudData:
+        enabled: true
+        existingClaim: nextcloud-data
 
     startupProbe:
       enabled: true
