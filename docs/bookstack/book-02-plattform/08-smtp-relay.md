@@ -9,7 +9,7 @@ Authentik / Nextcloud / BookStack
          │  port 25, ingen auth (internt)
          ▼
   smtp-relay (Maddy)          LoadBalancer: 192.168.20.143
-         │  STARTTLS :587 + auth
+         │  SMTPS :465 + auth (SSL/TLS, som Nextcloud/Bahnhof)
          ▼
   mailout.privat.bahnhof.se   (Bahnhof upstream)
          ▼
@@ -32,12 +32,12 @@ kubernetes/apps/selfhosted/smtp-relay/
 | Fält | Exempel | Beskrivning |
 |------|---------|-------------|
 | `SMTP_RELAY_SERVER` | `mailout.privat.bahnhof.se` | Bahnhof utgående SMTP |
-| `SMTP_RELAY_USERNAME` | `din@bahnhof-adress.se` | Full e-postadress från Mina sidor |
+| `SMTP_RELAY_USERNAME` | `mc957275` | Inloggningsnamn från Mina sidor (inte alltid full e-postadress) |
 | `SMTP_RELAY_PASSWORD` | `…` | Bahnhof e-postlösenord |
 | `SMTP_RELAY_HOSTNAME` | `engstrom.live` | HELO-hostname för Maddy |
-| `SMTP_FROM` | `din@bahnhof-adress.se` | Avsändare (From) i alla appar — **måste vara samma som `SMTP_RELAY_USERNAME` tills SPF/DKIM för egen domän finns** |
+| `SMTP_FROM` | `admin@engstrom.live` | Avsändare (From) i Authentik m.fl. |
 
-> **OBS:** Med Bahnhof som upstream fungerar inte `noreply@engstrom.live` som avsändare utan egen domän + SPF/DKIM hos Bahnhof. Relay skriver om SMTP-envelope till `SMTP_RELAY_USERNAME`, men mottagare kan fortfarande filtrera bort mail om From-header skiljer sig och domänen saknar SPF.
+> **OBS:** Upstream mot Bahnhof använder **port 465 med SSL/TLS** (SMTPS), samma som fungerande Nextcloud på TrueNAS — inte port 587/STARTTLS.
 
 Företagskund? Byt till `mailout.foretag.bahnhof.se`.
 
@@ -106,8 +106,8 @@ kubectl run -n selfhosted mail-test --rm -it --restart=Never \
 | `AUTHENTIK_EMAIL__PORT=587` utan `HOST` | Gammal Helm-config på klustret — samma som ovan |
 | Pod CrashLoop | Kolla secret sync: `kubectl get externalsecret -n selfhosted smtp-relay` |
 | Relay auth fail | Verifiera Bahnhof user/pass på Mina sidor |
-| Mail når inte fram | Kolla spam; sätt `SMTP_FROM` = `SMTP_RELAY_USERNAME` (Bahnhof-adress); se avsnittet *accepted men inget mail* nedan |
-| Port 25 ut spärrad | OK — Maddy använder Bahnhof :587, inte direkt utgående 25 |
+| Mail når inte fram | Kolla spam; verifiera `SMTP_RELAY_USERNAME` (t.ex. `mc957275`) och port 465 upstream i relay-loggen |
+| Port 25 ut spärrad | OK — Maddy använder Bahnhof :465 (SMTPS), inte direkt utgående 25 |
 | Maddy loggar `accepted` men inget mail | Se avsnittet *accepted men inget mail* nedan |
 
 ### `accepted` men inget mail
@@ -121,13 +121,15 @@ kubectl logs -n selfhosted deploy/smtp-relay --since=30m | grep -Ei 'msg_id|remo
 kubectl exec -n selfhosted deploy/smtp-relay -- maddy queue list 2>/dev/null || true
 ```
 
-2. **Verifiera att From = Bahnhof-konto** (du har nu `noreply@engstrom.live` — byt tillfälligt):
+2. **Verifiera 1Password matchar TrueNAS/Nextcloud** som fungerar:
+
+   - `SMTP_RELAY_SERVER` = `mailout.privat.bahnhof.se`
+   - `SMTP_RELAY_USERNAME` = inloggningsnamn (t.ex. `mc957275`)
+   - `SMTP_RELAY_PASSWORD` = samma lösenord som i Nextcloud
+   - Upstream ska vara **465 SSL/TLS** (fixat i Maddy-config)
 
 ```bash
-# I 1Password: sätt SMTP_FROM till samma adress som SMTP_RELAY_USERNAME
-kubectl annotate externalsecret authentik -n authentik force-sync=$(date +%s) --overwrite
-flux reconcile helmrelease authentik -n authentik --force
-kubectl rollout status deployment/authentik-worker -n authentik
+kubectl get secret smtp-relay-secret -n selfhosted -o jsonpath='{.data.SMTP_RELAY_USERNAME}' | base64 -d; echo
 ```
 
 3. **Testa Bahnhof direkt** (kringgår Authentik):
@@ -141,11 +143,12 @@ kubectl run -n selfhosted mail-test --rm -it --restart=Never \
 
 4. **Kolla skräppost** hos mottagaren (Telia filtrerar hårt utan SPF/DKIM).
 
-Efter Git-push med uppdaterad Maddy-config (envelope rewrite + `require_tls`):
+Efter Git-push med uppdaterad Maddy-config (Bahnhof **465 SMTPS**):
 
 ```bash
 flux reconcile kustomization smtp-relay -n selfhosted --with-source
 kubectl rollout restart deployment/smtp-relay -n selfhosted
+kubectl logs -n selfhosted deploy/smtp-relay -f
 ```
 
 Efter Git-push, kör i ordning:

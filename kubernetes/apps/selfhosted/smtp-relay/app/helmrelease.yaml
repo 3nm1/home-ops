@@ -21,6 +21,7 @@ spec:
               tag: 0.9.5@sha256:de42151adff6388edb5e4ee88f60334fa1ab85e309485193ecb1c2db20203315
             env:
               SMTP_RELAY_SMTP_PORT: &port 25
+              SMTP_RELAY_UPSTREAM_PORT: "465"
             envFrom:
               - secretRef:
                   name: smtp-relay-secret
@@ -88,9 +89,6 @@ spec:
             hostname {env:SMTP_RELAY_HOSTNAME}
             smtp tcp://0.0.0.0:{env:SMTP_RELAY_SMTP_PORT} {
               default_source {
-                modify {
-                  replace_sender regexp ".+" "{env:SMTP_RELAY_USERNAME}"
-                }
                 deliver_to &remote_queue
               }
             }
@@ -99,10 +97,8 @@ spec:
             }
             target.smtp remote_smtp {
               debug yes
-              starttls yes
-              require_tls yes
               auth plain {env:SMTP_RELAY_USERNAME} {env:SMTP_RELAY_PASSWORD}
-              targets tcp://{env:SMTP_RELAY_SERVER}:587
+              targets tls://{env:SMTP_RELAY_SERVER}:{env:SMTP_RELAY_UPSTREAM_PORT}
             }
     persistence:
       cache:
