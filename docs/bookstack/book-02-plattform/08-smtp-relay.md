@@ -106,7 +106,8 @@ kubectl run -n selfhosted mail-test --rm -it --restart=Never \
 | `AUTHENTIK_EMAIL__PORT=587` utan `HOST` | Gammal Helm-config på klustret — samma som ovan |
 | Pod CrashLoop | Kolla secret sync: `kubectl get externalsecret -n selfhosted smtp-relay` |
 | Relay auth fail | Verifiera Bahnhof user/pass på Mina sidor |
-| Mail når inte fram | Kolla spam; verifiera `SMTP_RELAY_USERNAME` (t.ex. `mc957275`) och port 465 upstream i relay-loggen |
+| `TLS required but unsupported by downstream` | Port 465 uses implicit TLS — Maddy måste ha `starttls no` med `tls://` (fixat i config) |
+| Mail når inte fram | Kolla spam; verifiera `SMTP_RELAY_USERNAME` (t.ex. `mc957275`) |
 | Port 25 ut spärrad | OK — Maddy använder Bahnhof :465 (SMTPS), inte direkt utgående 25 |
 | Maddy loggar `accepted` men inget mail | Se avsnittet *accepted men inget mail* nedan |
 
