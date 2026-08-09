@@ -28,15 +28,22 @@ Slug för Nextcloud: `nextcloud` → discovery URI:
 
 ### E-post (lösenordsåterställning m.m.)
 
-Authentik skickar mail via intern relay:
+Authentik skickar mail via intern relay (miljövariabler på **server och worker**):
 
 ```yaml
-authentik.email.host: smtp-relay.selfhosted.svc.cluster.local
-authentik.email.port: 25
-authentik.email.from:  # från 1Password smtp-relay → SMTP_FROM
+AUTHENTIK_EMAIL__HOST: smtp-relay.selfhosted.svc.cluster.local
+AUTHENTIK_EMAIL__PORT: 25
+AUTHENTIK_EMAIL__FROM:  # från authentik-secret → SMTP_FROM (1Password smtp-relay)
 ```
 
-Test: `ak test_email mottagare@example.com` i authentik-server-podden.
+Test:
+
+```bash
+kubectl exec -n authentik deploy/authentik-worker -- env | grep AUTHENTIK_EMAIL
+kubectl exec -n authentik deploy/authentik-server -- ak test_email mottagare@example.com
+```
+
+Kolla worker-loggar om det timeoutar: `kubectl logs -n authentik deploy/authentik-worker --tail=50`
 
 ## Secrets
 
