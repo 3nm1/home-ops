@@ -35,9 +35,9 @@ kubernetes/apps/selfhosted/smtp-relay/
 | `SMTP_RELAY_USERNAME` | `din@bahnhof-adress.se` | Full e-postadress från Mina sidor |
 | `SMTP_RELAY_PASSWORD` | `…` | Bahnhof e-postlösenord |
 | `SMTP_RELAY_HOSTNAME` | `engstrom.live` | HELO-hostname för Maddy |
-| `SMTP_FROM` | `din@bahnhof-adress.se` | Avsändare (From) i alla appar |
+| `SMTP_FROM` | `din@bahnhof-adress.se` | Avsändare (From) i alla appar — **måste vara samma som `SMTP_RELAY_USERNAME` tills SPF/DKIM för egen domän finns** |
 
-> **OBS:** Bahnhof förväntar sig normalt att From matchar ditt Bahnhof-konto. `@engstrom.live` kräver egen domänhantering/DNS — spara till senare.
+> **OBS:** Med Bahnhof som upstream fungerar inte `noreply@engstrom.live` som avsändare utan egen domän + SPF/DKIM hos Bahnhof. Relay skriver om SMTP-envelope till `SMTP_RELAY_USERNAME`, men mottagare kan fortfarande filtrera bort mail om From-header skiljer sig och domänen saknar SPF.
 
 Företagskund? Byt till `mailout.foretag.bahnhof.se`.
 
@@ -106,8 +106,47 @@ kubectl run -n selfhosted mail-test --rm -it --restart=Never \
 | `AUTHENTIK_EMAIL__PORT=587` utan `HOST` | Gammal Helm-config på klustret — samma som ovan |
 | Pod CrashLoop | Kolla secret sync: `kubectl get externalsecret -n selfhosted smtp-relay` |
 | Relay auth fail | Verifiera Bahnhof user/pass på Mina sidor |
-| Mail når inte fram | Kolla spam; From måste vara giltig Bahnhof-adress |
+| Mail når inte fram | Kolla spam; sätt `SMTP_FROM` = `SMTP_RELAY_USERNAME` (Bahnhof-adress); se avsnittet *accepted men inget mail* nedan |
 | Port 25 ut spärrad | OK — Maddy använder Bahnhof :587, inte direkt utgående 25 |
+| Maddy loggar `accepted` men inget mail | Se avsnittet *accepted men inget mail* nedan |
+
+### `accepted` men inget mail
+
+Authentik → Maddy fungerar om du ser `smtp: accepted` i relay-loggen. Då fastnar leveransen troligen på **Bahnhof → mottagare**.
+
+1. **Kolla utgående leverans i relay-loggen** (sök efter msg_id eller fel):
+
+```bash
+kubectl logs -n selfhosted deploy/smtp-relay --since=30m | grep -Ei 'msg_id|remote|queue|fail|reject|deliver|550|553|554'
+kubectl exec -n selfhosted deploy/smtp-relay -- maddy queue list 2>/dev/null || true
+```
+
+2. **Verifiera att From = Bahnhof-konto** (du har nu `noreply@engstrom.live` — byt tillfälligt):
+
+```bash
+# I 1Password: sätt SMTP_FROM till samma adress som SMTP_RELAY_USERNAME
+kubectl annotate externalsecret authentik -n authentik force-sync=$(date +%s) --overwrite
+flux reconcile helmrelease authentik -n authentik --force
+kubectl rollout status deployment/authentik-worker -n authentik
+```
+
+3. **Testa Bahnhof direkt** (kringgår Authentik):
+
+```bash
+kubectl run -n selfhosted mail-test --rm -it --restart=Never \
+  --image=nicolaka/netshoot -- \
+  sh -c 'apk add -q swaks && swaks --to enmi@telia.com --from DIN@BAHNHOF.SE \
+    --server smtp-relay.selfhosted.svc.cluster.local:25 --body "relay test"'
+```
+
+4. **Kolla skräppost** hos mottagaren (Telia filtrerar hårt utan SPF/DKIM).
+
+Efter Git-push med uppdaterad Maddy-config (envelope rewrite + `require_tls`):
+
+```bash
+flux reconcile kustomization smtp-relay -n selfhosted --with-source
+kubectl rollout restart deployment/smtp-relay -n selfhosted
+```
 
 Efter Git-push, kör i ordning:
 

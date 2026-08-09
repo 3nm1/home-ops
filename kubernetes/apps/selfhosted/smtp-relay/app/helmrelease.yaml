@@ -88,6 +88,9 @@ spec:
             hostname {env:SMTP_RELAY_HOSTNAME}
             smtp tcp://0.0.0.0:{env:SMTP_RELAY_SMTP_PORT} {
               default_source {
+                modify {
+                  replace_sender regexp ".+" "{env:SMTP_RELAY_USERNAME}"
+                }
                 deliver_to &remote_queue
               }
             }
@@ -95,7 +98,9 @@ spec:
               target &remote_smtp
             }
             target.smtp remote_smtp {
+              debug yes
               starttls yes
+              require_tls yes
               auth plain {env:SMTP_RELAY_USERNAME} {env:SMTP_RELAY_PASSWORD}
               targets tcp://{env:SMTP_RELAY_SERVER}:587
             }
