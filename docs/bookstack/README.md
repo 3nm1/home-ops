@@ -31,7 +31,7 @@ Uppdatera gärna **Git först**, sedan synka manuellt till BookStack tills vi ev
 | Bok | Syfte |
 |-----|--------|
 | 01 Översikt | Varför, hardware, resan hittills |
-| 02 Plattform | Talos, Flux, secrets, storage |
+| 02 Plattform | Talos, Flux, secrets, storage, **SMTP-relay** |
 | 03 Nätverk | VLAN, Envoy, Cloudflare, TLS |
 | 04 Identitet | Authentik, OIDC, forward-auth |
 | 05 Media | *arr, Jellyfin, automation |

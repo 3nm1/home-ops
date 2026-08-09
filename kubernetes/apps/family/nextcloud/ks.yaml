@@ -11,6 +11,8 @@ spec:
       namespace: flux-system
     - name: authentik
       namespace: authentik
+    - name: smtp-relay
+      namespace: flux-system
   interval: 1h
   path: ./kubernetes/apps/family/nextcloud/app
   postBuild:

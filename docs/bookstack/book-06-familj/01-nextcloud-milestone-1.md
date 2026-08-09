@@ -54,6 +54,13 @@ Browser → Envoy (internal) → Nextcloud (Apache)
 - Redirect: `https://cloud.engstrom.live/apps/user_oidc/code`
 - Hooks installerar `user_oidc` och provider `authentik`
 
+## E-post (SMTP-relay)
+
+- Relay: `smtp-relay.selfhosted.svc.cluster.local:25` (ingen auth internt)
+- Upstream: Bahnhof `mailout.privat.bahnhof.se:587`
+- From-adress: `SMTP_FROM` från 1Password-posten `smtp-relay`
+- Konfigureras via post-install/post-upgrade hooks (`occ config:system:set mail_*`)
+
 ## Deploy-beroenden
 
 ```yaml

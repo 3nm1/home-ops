@@ -46,6 +46,10 @@ spec:
               OIDC_END_SESSION_ENDPOINT: "true"
               OIDC_USER_TO_GROUPS: "true"
               OIDC_GROUPS_CLAIM: groups
+              MAIL_DRIVER: smtp
+              MAIL_HOST: smtp-relay.selfhosted.svc.cluster.local
+              MAIL_PORT: "25"
+              MAIL_ENCRYPTION: ""
             envFrom:
               - secretRef:
                   name: bookstack-secret

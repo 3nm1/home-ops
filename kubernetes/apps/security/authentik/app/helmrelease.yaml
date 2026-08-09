@@ -32,6 +32,10 @@ spec:
       name: authentik-secret
       valuesKey: POSTGRESQL_PASSWORD
       targetPath: postgresql.auth.password
+    - kind: Secret
+      name: authentik-secret
+      valuesKey: SMTP_FROM
+      targetPath: authentik.email.from
   values:
     global:
       security:
@@ -42,6 +46,14 @@ spec:
         - name: TZ
           value: Europe/Stockholm
     authentik:
+      email:
+        host: smtp-relay.selfhosted.svc.cluster.local
+        port: 25
+        username: ""
+        password: ""
+        use_tls: false
+        use_ssl: false
+        timeout: 30
       error_reporting:
         enabled: false
     postgresql:

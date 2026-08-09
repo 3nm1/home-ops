@@ -75,6 +75,11 @@ spec:
               key: OIDC_CLIENT_SECRET
         - name: OIDC_DISCOVERY_URI
           value: https://auth.${SECRET_DOMAIN}/application/o/nextcloud/.well-known/openid-configuration
+        - name: SMTP_FROM
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud-secret
+              key: SMTP_FROM
       configs:
         proxy.config.php: |-
           <?php
@@ -113,6 +118,17 @@ spec:
               || true
             occ config:app:set --type=string --value=0 user_oidc allow_multiple_user_backends || true
           fi
+          if [ -n "$${SMTP_FROM:-}" ]; then
+            mail_local="$${SMTP_FROM%%@*}"
+            mail_domain="$${SMTP_FROM#*@}"
+            occ config:system:set mail_smtpmode --value=smtp
+            occ config:system:set mail_smtphost --value=smtp-relay.selfhosted.svc.cluster.local
+            occ config:system:set mail_smtpport --value=25 --type=integer
+            occ config:system:set mail_smtpsecure --value=
+            occ config:system:set mail_smtpauth --value=0 --type=integer
+            occ config:system:set mail_from_address --value="$${mail_local}"
+            occ config:system:set mail_domain --value="$${mail_domain}"
+          fi
         post-upgrade: |-
           #!/bin/bash
           set -euo pipefail
@@ -120,6 +136,17 @@ spec:
           if ! occ app:list | grep -qE 'user_oidc.*enabled'; then
             occ app:install user_oidc || true
             occ app:enable user_oidc
+          fi
+          if [ -n "$${SMTP_FROM:-}" ]; then
+            mail_local="$${SMTP_FROM%%@*}"
+            mail_domain="$${SMTP_FROM#*@}"
+            occ config:system:set mail_smtpmode --value=smtp
+            occ config:system:set mail_smtphost --value=smtp-relay.selfhosted.svc.cluster.local
+            occ config:system:set mail_smtpport --value=25 --type=integer
+            occ config:system:set mail_smtpsecure --value=
+            occ config:system:set mail_smtpauth --value=0 --type=integer
+            occ config:system:set mail_from_address --value="$${mail_local}"
+            occ config:system:set mail_domain --value="$${mail_domain}"
           fi
       extraInitContainers:
         - name: fix-nfs-data-permissions

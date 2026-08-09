@@ -26,6 +26,18 @@ Skapa i Authentik UI:
 Slug för Nextcloud: `nextcloud` → discovery URI:
 `https://auth.engstrom.live/application/o/nextcloud/.well-known/openid-configuration`
 
+### E-post (lösenordsåterställning m.m.)
+
+Authentik skickar mail via intern relay:
+
+```yaml
+authentik.email.host: smtp-relay.selfhosted.svc.cluster.local
+authentik.email.port: 25
+authentik.email.from:  # från 1Password smtp-relay → SMTP_FROM
+```
+
+Test: `ak test_email mottagare@example.com` i authentik-server-podden.
+
 ## Secrets
 
 Client ID/secret i 1Password → ExternalSecret → app env vars.

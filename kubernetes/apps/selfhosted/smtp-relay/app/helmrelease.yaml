@@ -1,0 +1,110 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: smtp-relay
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: smtp-relay
+  interval: 1h
+  values:
+    controllers:
+      smtp-relay:
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/foxcpp/maddy
+              tag: 0.9.5@sha256:de42151adff6388edb5e4ee88f60334fa1ab85e309485193ecb1c2db20203315
+            env:
+              SMTP_RELAY_SMTP_PORT: &port 25
+            envFrom:
+              - secretRef:
+                  name: smtp-relay-secret
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 30
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 64Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+    service:
+      app:
+        controller: smtp-relay
+        forceRename: smtp-relay
+        type: LoadBalancer
+        annotations:
+          lbipam.cilium.io/ips: 192.168.20.143
+        externalTrafficPolicy: Local
+        ports:
+          smtp:
+            port: *port
+    configMaps:
+      config:
+        data:
+          maddy.conf: |-
+            state_dir /cache/state
+            runtime_dir /cache/run
+            tls off
+            hostname {env:SMTP_RELAY_HOSTNAME}
+            smtp tcp://0.0.0.0:{env:SMTP_RELAY_SMTP_PORT} {
+              default_source {
+                deliver_to &remote_queue
+              }
+            }
+            target.queue remote_queue {
+              target &remote_smtp
+            }
+            target.smtp remote_smtp {
+              starttls yes
+              auth plain {env:SMTP_RELAY_USERNAME} {env:SMTP_RELAY_PASSWORD}
+              targets tcp://{env:SMTP_RELAY_SERVER}:587
+            }
+    persistence:
+      cache:
+        type: emptyDir
+      config-file:
+        type: configMap
+        identifier: config
+        globalMounts:
+          - path: /data/maddy.conf
+            subPath: maddy.conf

@@ -23,7 +23,8 @@ Hylla: Engström Home Lab
 │   │   └── External Secrets + 1Password
 │   └── Kapitel: Lagring
 │       ├── Longhorn
-│       └── NFS på TrueNAS
+│       ├── NFS på TrueNAS
+│       └── SMTP-relay (Maddy)
 │
 ├── Bok 03: Nätverk
 │   ├── Kapitel: Fysiskt / LAN
@@ -89,6 +90,7 @@ Hylla: Engström Home Lab
 | `book-02-plattform/05-external-secrets-1password.md` | External Secrets + 1Password |
 | `book-02-plattform/06-longhorn.md` | Longhorn |
 | `book-02-plattform/07-nfs-truenas.md` | NFS på TrueNAS |
+| `book-02-plattform/08-smtp-relay.md` | SMTP-relay (Maddy + Bahnhof) |
 | `book-03-natverk/01-vlan-opnsense.md` | VLAN och OPNsense |
 | `book-03-natverk/02-envoy-gateways.md` | Envoy Gateway |
 | `book-03-natverk/03-cloudflare-tls.md` | Cloudflare + TLS |

@@ -8,6 +8,7 @@ Repo: `kubernetes/apps/selfhosted/`
 | App | URL | Auth | DB / storage |
 |-----|-----|------|--------------|
 | **Homarr** | `homarr.engstrom.live` | OIDC | PVC |
+| **SMTP-relay** | `192.168.20.143:25` (LAN) | — | emptyDir |
 | **BookStack** | `bookstack.engstrom.live` | OIDC | MariaDB sidecar + PVC |
 | **Homebox** | `homebox.engstrom.live` | Lokalt | PVC |
 | **Stirling PDF** | `stirling-pdf.engstrom.live` | — | — |
