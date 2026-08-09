@@ -1,0 +1,62 @@
+# Vanliga kommandon
+
+## Kubernetes
+
+```bash
+kubectl get pods -n <namespace>
+kubectl logs -n <namespace> deploy/<name> -f
+kubectl describe pod -n <namespace> <pod>
+kubectl exec -it -n <namespace> deploy/<name> -- bash
+kubectl rollout restart deployment/<name> -n <namespace>
+kubectl get pvc -n <namespace>
+kubectl get httproute -n <namespace>
+```
+
+## Talos
+
+```bash
+talosctl --nodes 192.168.20.150 health
+talosctl --nodes 192.168.20.151 logs kubelet
+talosctl --nodes 192.168.20.150 dashboard
+```
+
+## Flux
+
+```bash
+flux get all -A
+flux logs --all-namespaces --follow
+flux reconcile kustomization cluster-apps -n flux-system --with-source
+```
+
+## Nextcloud (occ)
+
+```bash
+kubectl exec -n family deploy/nextcloud -- su -s /bin/bash www-data -c "php occ status"
+kubectl exec -n family deploy/nextcloud -- su -s /bin/bash www-data -c "php occ app:list"
+```
+
+## Secrets (base64-dekod)
+
+```bash
+kubectl get secret -n family nextcloud-secret -o jsonpath='{.data.nextcloud-password}' | base64 -d; echo
+```
+
+## DNS från pod
+
+```bash
+kubectl exec -n family deploy/nextcloud -- getent hosts nextcloud-postgresql
+```
+
+## Port-forward (debug)
+
+```bash
+kubectl port-forward -n family svc/nextcloud 8080:80
+```
+
+## Repo (lokal)
+
+```bash
+cd ~/Dokument/home-ops
+git pull
+# .venv om python-verktyg behövs
+```
