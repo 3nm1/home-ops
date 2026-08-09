@@ -60,8 +60,11 @@ Företagskund? Byt till `mailout.foretag.bahnhof.se`.
 
 ## Deploy
 
+Child Kustomizations ligger i app-namespaces, inte `flux-system`:
+
 ```bash
-flux reconcile kustomization smtp-relay -n flux-system --with-source
+flux reconcile kustomization smtp-relay -n selfhosted --with-source
+flux reconcile kustomization authentik -n authentik --with-source
 kubectl get pods -n selfhosted -l app.kubernetes.io/name=smtp-relay
 kubectl get svc -n selfhosted smtp-relay
 ```
@@ -71,6 +74,12 @@ kubectl get svc -n selfhosted smtp-relay
 Efter deploy och pod restart:
 
 ```bash
+# Verifiera att worker fått SMTP-env (ska visa HOST och PORT=25)
+kubectl exec -n authentik deploy/authentik-worker -- env | grep AUTHENTIK_EMAIL
+
+# Verifiera att SMTP_FROM fyllts i från 1Password
+kubectl get secret authentik-secret -n authentik -o jsonpath='{.data.SMTP_FROM}' | base64 -d; echo
+
 kubectl exec -n authentik deploy/authentik-server -- ak test_email <din@mottagare.se>
 ```
 
@@ -91,10 +100,25 @@ kubectl run -n selfhosted mail-test --rm -it --restart=Never \
 
 | Symptom | Åtgärd |
 |---------|--------|
+| `kustomization "smtp-relay" not found` i flux-system | Använd `-n selfhosted` (Authentik: `-n authentik`) |
+| `Connection refused` / `from_email: authentik@localhost` | Worker saknar `AUTHENTIK_EMAIL__HOST` — pusha Git, `flux reconcile helmrelease authentik -n authentik --force`, restart worker |
+| Tom `SMTP_FROM` i `authentik-secret` | Skapa/fyll 1Password-post `smtp-relay` med fält `SMTP_FROM`, force-sync ExternalSecret |
+| `AUTHENTIK_EMAIL__PORT=587` utan `HOST` | Gammal Helm-config på klustret — samma som ovan |
 | Pod CrashLoop | Kolla secret sync: `kubectl get externalsecret -n selfhosted smtp-relay` |
 | Relay auth fail | Verifiera Bahnhof user/pass på Mina sidor |
 | Mail når inte fram | Kolla spam; From måste vara giltig Bahnhof-adress |
 | Port 25 ut spärrad | OK — Maddy använder Bahnhof :587, inte direkt utgående 25 |
+
+Efter Git-push, kör i ordning:
+
+```bash
+flux reconcile source git flux-system -n flux-system
+flux reconcile kustomization smtp-relay -n selfhosted --with-source
+kubectl annotate externalsecret authentik -n authentik force-sync=$(date +%s) --overwrite
+flux reconcile kustomization authentik -n authentik --with-source
+flux reconcile helmrelease authentik -n authentik --force
+kubectl rollout status deployment/authentik-worker -n authentik
+```
 
 ## Säkerhet
 

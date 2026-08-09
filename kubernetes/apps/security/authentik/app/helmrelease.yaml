@@ -57,6 +57,12 @@ spec:
               name: authentik-secret
               key: SMTP_FROM
     authentik:
+      email:
+        host: smtp-relay.selfhosted.svc.cluster.local
+        port: 25
+        use_tls: false
+        use_ssl: false
+        timeout: 30
       error_reporting:
         enabled: false
     postgresql:

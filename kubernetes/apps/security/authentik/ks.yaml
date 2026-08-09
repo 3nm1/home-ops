@@ -10,7 +10,7 @@ spec:
     - name: longhorn
       namespace: flux-system
     - name: smtp-relay
-      namespace: flux-system
+      namespace: selfhosted
   interval: 1h
   path: ./kubernetes/apps/security/authentik/app
   postBuild:
