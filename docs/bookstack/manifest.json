@@ -1,0 +1,143 @@
+{
+  "shelf": "Engström Home Lab",
+  "books": [
+    {
+      "dir": "book-01-oversikt",
+      "name": "Översikt & resa",
+      "chapters": [
+        {
+          "name": "Introduktion",
+          "pages": [
+            "01-valkommen.md",
+            "02-hardware-och-noder.md",
+            "03-gitops-resan.md"
+          ]
+        },
+        {
+          "name": "Arkitektur",
+          "pages": ["04-hog-niva-arkitektur.md"]
+        }
+      ]
+    },
+    {
+      "dir": "book-02-plattform",
+      "name": "Plattform",
+      "chapters": [
+        {
+          "name": "Kubernetes",
+          "pages": ["01-talos-kubernetes.md"]
+        },
+        {
+          "name": "GitOps",
+          "pages": ["02-flux-gitops.md", "03-app-struktur-i-repot.md"]
+        },
+        {
+          "name": "Secrets",
+          "pages": [
+            "04-sops-och-age.md",
+            "05-external-secrets-1password.md"
+          ]
+        },
+        {
+          "name": "Lagring",
+          "pages": [
+            "06-longhorn.md",
+            "07-nfs-truenas.md",
+            "08-smtp-relay.md"
+          ]
+        }
+      ]
+    },
+    {
+      "dir": "book-03-natverk",
+      "name": "Nätverk",
+      "chapters": [
+        {
+          "name": "Fysiskt / LAN",
+          "pages": ["01-vlan-opnsense.md"]
+        },
+        {
+          "name": "Kubernetes-ingress",
+          "pages": ["02-envoy-gateways.md"]
+        },
+        {
+          "name": "Extern åtkomst",
+          "pages": ["03-cloudflare-tls.md"]
+        }
+      ]
+    },
+    {
+      "dir": "book-04-identitet",
+      "name": "Identitet & säkerhet",
+      "chapters": [
+        {
+          "name": "Authentik",
+          "pages": [
+            "01-authentik-oversikt.md",
+            "02-oidc-appar.md",
+            "03-forward-auth.md"
+          ]
+        }
+      ]
+    },
+    {
+      "dir": "book-05-media",
+      "name": "Media stack",
+      "chapters": [
+        {
+          "name": "Pipeline",
+          "pages": ["01-pipeline-oversikt.md", "02-appar-och-urls.md"]
+        },
+        {
+          "name": "Automation",
+          "pages": ["03-automation.md"]
+        }
+      ]
+    },
+    {
+      "dir": "book-06-familj",
+      "name": "Familjetjänster",
+      "chapters": [
+        {
+          "name": "Nextcloud",
+          "pages": [
+            "01-nextcloud-milestone-1.md",
+            "02-nextcloud-felsokning.md"
+          ]
+        },
+        {
+          "name": "Framtida planer",
+          "pages": ["03-framtida-planer.md"]
+        }
+      ]
+    },
+    {
+      "dir": "book-07-selfhosted",
+      "name": "Self-hosted verktyg",
+      "chapters": [
+        {
+          "name": "Appar",
+          "pages": ["01-appar.md"]
+        }
+      ]
+    },
+    {
+      "dir": "book-08-runbooks",
+      "name": "Runbooks",
+      "chapters": [
+        {
+          "name": "Drift",
+          "pages": ["01-flux-reconcile.md", "02-kluster-halsa.md"]
+        },
+        {
+          "name": "Felsökning",
+          "pages": ["03-vanliga-kommandon.md"]
+        },
+        {
+          "name": "Återställning",
+          "pages": ["04-aterstallning.md"]
+        }
+      ]
+    }
+  ]
+}
