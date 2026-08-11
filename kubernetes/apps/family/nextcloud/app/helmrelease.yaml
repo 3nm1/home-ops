@@ -120,14 +120,14 @@ spec:
             'instanceid' => 'f4e8b2c1-9d3a-4f6e-8b7c-1a2d3e4f5a6b',
           );
       hooks:
-        post-installation: |-
+        before-starting: |-
           #!/bin/bash
           set -euo pipefail
           occ() { run_as www-data php occ "$@"; }
-          if ! occ app:list | grep -qE 'user_oidc.*enabled'; then
-            occ app:install user_oidc || true
-            occ app:enable user_oidc
+          if ! occ app:list | grep -q 'user_oidc'; then
+            occ app:install user_oidc
           fi
+          occ app:enable user_oidc
           if [ -n "$${OIDC_CLIENT_ID:-}" ] && [ -n "$${OIDC_CLIENT_SECRET:-}" ] && [ -n "$${OIDC_DISCOVERY_URI:-}" ]; then
             occ user_oidc:provider authentik \
               --clientid="$${OIDC_CLIENT_ID}" \
@@ -147,27 +147,16 @@ spec:
             occ config:system:set mail_from_address --value="$${mail_local}"
             occ config:system:set mail_domain --value="$${mail_domain}"
           fi
+        post-installation: |-
+          #!/bin/bash
+          set -euo pipefail
+          occ() { run_as www-data php occ "$@"; }
           occ background:cron
           occ maintenance:repair --include-expensive || true
         post-upgrade: |-
           #!/bin/bash
           set -euo pipefail
           occ() { run_as www-data php occ "$@"; }
-          if ! occ app:list | grep -qE 'user_oidc.*enabled'; then
-            occ app:install user_oidc || true
-            occ app:enable user_oidc
-          fi
-          if [ -n "$${SMTP_FROM:-}" ]; then
-            mail_local="$${SMTP_FROM%%@*}"
-            mail_domain="$${SMTP_FROM#*@}"
-            occ config:system:set mail_smtpmode --value=smtp
-            occ config:system:set mail_smtphost --value=smtp-relay.selfhosted.svc.cluster.local
-            occ config:system:set mail_smtpport --value=25 --type=integer
-            occ config:system:set mail_smtpsecure --value=
-            occ config:system:set mail_smtpauth --value=0 --type=integer
-            occ config:system:set mail_from_address --value="$${mail_local}"
-            occ config:system:set mail_domain --value="$${mail_domain}"
-          fi
           occ background:cron
           occ maintenance:repair --include-expensive || true
       extraInitContainers:
