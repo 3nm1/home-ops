@@ -39,6 +39,17 @@ spec:
           sectionName: https
       wellKnown:
         enabled: true
+      rules:
+        - matches:
+            - path:
+                type: PathPrefix
+                value: "/"
+          filters:
+            - type: ResponseHeaderModifier
+              responseHeaderModifier:
+                set:
+                  - name: Strict-Transport-Security
+                    value: "max-age=15552000; includeSubDomains"
 
     ingress:
       enabled: false
@@ -101,6 +112,13 @@ spec:
               'default_token_endpoint_auth_method' => 'client_secret_post',
             ),
           );
+        security.config.php: |-
+          <?php
+          $CONFIG = array (
+            'maintenance_window_start' => 3,
+            'default_phone_region' => 'SE',
+            'instanceid' => 'f4e8b2c1-9d3a-4f6e-8b7c-1a2d3e4f5a6b',
+          );
       hooks:
         post-installation: |-
           #!/bin/bash
@@ -129,6 +147,8 @@ spec:
             occ config:system:set mail_from_address --value="$${mail_local}"
             occ config:system:set mail_domain --value="$${mail_domain}"
           fi
+          occ background:cron
+          occ maintenance:repair --include-expensive || true
         post-upgrade: |-
           #!/bin/bash
           set -euo pipefail
@@ -148,6 +168,8 @@ spec:
             occ config:system:set mail_from_address --value="$${mail_local}"
             occ config:system:set mail_domain --value="$${mail_domain}"
           fi
+          occ background:cron
+          occ maintenance:repair --include-expensive || true
       extraInitContainers:
         - name: fix-nfs-data-permissions
           image: docker.io/library/busybox:1.38
@@ -191,7 +213,42 @@ spec:
       enabled: false
 
     redis:
-      enabled: false
+      enabled: true
+      architecture: standalone
+      image:
+        registry: docker.io
+        repository: bitnamilegacy/redis
+      auth:
+        enabled: true
+        existingSecret: nextcloud-secret
+        existingSecretPasswordKey: redis-password
+      master:
+        persistence:
+          enabled: false
+
+    cronjob:
+      enabled: true
+      type: cronjob
+      cronjob:
+        schedule: "*/5 * * * *"
+        securityContext:
+          runAsUser: 33
+          runAsGroup: 33
+          runAsNonRoot: true
+        affinity:
+          podAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values:
+                        - nextcloud
+                    - key: app.kubernetes.io/component
+                      operator: In
+                      values:
+                        - app
+                topologyKey: kubernetes.io/hostname
 
     collabora:
       enabled: false
