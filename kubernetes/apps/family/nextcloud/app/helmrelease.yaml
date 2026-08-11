@@ -122,31 +122,33 @@ spec:
       hooks:
         before-starting: |-
           #!/bin/bash
-          set -euo pipefail
+          set -uo pipefail
           occ() { run_as www-data php occ "$@"; }
-          if ! occ app:list | grep -q 'user_oidc'; then
-            occ app:install user_oidc
+          if ! occ app:list 2>/dev/null | grep -q 'user_oidc'; then
+            occ app:install user_oidc || echo "WARN: user_oidc install failed, continuing startup"
           fi
-          occ app:enable user_oidc
+          occ app:enable user_oidc || echo "WARN: user_oidc enable failed, continuing startup"
           if [ -n "$${OIDC_CLIENT_ID:-}" ] && [ -n "$${OIDC_CLIENT_SECRET:-}" ] && [ -n "$${OIDC_DISCOVERY_URI:-}" ]; then
             occ user_oidc:provider authentik \
               --clientid="$${OIDC_CLIENT_ID}" \
               --clientsecret="$${OIDC_CLIENT_SECRET}" \
               --discoveryuri="$${OIDC_DISCOVERY_URI}" \
-              || true
-            occ config:app:set --type=string --value=0 user_oidc allow_multiple_user_backends || true
+              || echo "WARN: user_oidc provider setup failed, continuing startup"
+            occ config:app:set --type=string --value=0 user_oidc allow_multiple_user_backends \
+              || echo "WARN: user_oidc config failed, continuing startup"
           fi
           if [ -n "$${SMTP_FROM:-}" ]; then
             mail_local="$${SMTP_FROM%%@*}"
             mail_domain="$${SMTP_FROM#*@}"
-            occ config:system:set mail_smtpmode --value=smtp
-            occ config:system:set mail_smtphost --value=smtp-relay.selfhosted.svc.cluster.local
-            occ config:system:set mail_smtpport --value=25 --type=integer
-            occ config:system:set mail_smtpsecure --value=
-            occ config:system:set mail_smtpauth --value=0 --type=integer
-            occ config:system:set mail_from_address --value="$${mail_local}"
-            occ config:system:set mail_domain --value="$${mail_domain}"
+            occ config:system:set mail_smtpmode --value=smtp || true
+            occ config:system:set mail_smtphost --value=smtp-relay.selfhosted.svc.cluster.local || true
+            occ config:system:set mail_smtpport --value=25 --type=integer || true
+            occ config:system:set mail_smtpsecure --value= || true
+            occ config:system:set mail_smtpauth --value=0 --type=integer || true
+            occ config:system:set mail_from_address --value="$${mail_local}" || true
+            occ config:system:set mail_domain --value="$${mail_domain}" || true
           fi
+          exit 0
         post-installation: |-
           #!/bin/bash
           set -euo pipefail
