@@ -30,9 +30,22 @@ flux reconcile kustomization cluster-apps -n flux-system --with-source
 
 ## Nextcloud (occ)
 
+Kör alltid som **www-data**:
+
 ```bash
 kubectl exec -n family deploy/nextcloud -- su -s /bin/bash www-data -c "php occ status"
 kubectl exec -n family deploy/nextcloud -- su -s /bin/bash www-data -c "php occ app:list"
+kubectl exec -n family deploy/nextcloud -- su -s /bin/bash www-data -c "php occ user:list"
+kubectl exec -n family deploy/nextcloud -- su -s /bin/bash www-data -c "php occ group:list Familj"
+kubectl get cronjob -n family
+```
+
+## Authentik
+
+```bash
+kubectl exec -n authentik deploy/authentik-server -- ls -la /data/media
+kubectl exec -n authentik deploy/authentik-server -- ak test_email mottagare@example.com
+flux reconcile externalsecret nextcloud -n family --force
 ```
 
 ## Secrets (base64-dekod)

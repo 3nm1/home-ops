@@ -93,6 +93,82 @@ kubectl exec -n family deploy/nextcloud -- su -s /bin/bash www-data -c "php occ 
 | Inga pods | `${OIDC_*}` i hooks | Escapa som `$${OIDC_*}` |
 | Helm upgrade fail | Dubbel mount `/var/www/html/data` | Använd `nextcloudData` PVC, ta bort extraVolumeMounts |
 | Postgres Pending | Nod NotReady, Longhorn attach | Infrastruktur — se klusterhälsa |
+| `user_oidc` saknas | Fel grep i hook + post-install körs bara en gång | `before-starting`-hook med korrekt `grep 'user_oidc'` |
+| Pod CrashLoop | `before-starting` med `set -e` | Best-effort hooks — faila inte pod start |
+| Ingen CronJob | `cronjob.enabled: false` | Aktivera cronjob, UID 33, podAffinity |
+| Client ID Error (Authentik) | OIDC credentials i 1Password ≠ Authentik | Kopiera från Authentik → 1Password → reconcile secret |
+
+---
+
+## Problem 5: OIDC / user_oidc
+
+**Symptom:** `There are no commands defined in the "user_oidc" namespace` — bara lokal `admin` finns.
+
+**Orsak:** Appen `user_oidc` aldrig installerad, eller provider inte konfigurerad.
+
+**Fix:**
+
+```bash
+kubectl exec -n family deploy/nextcloud -- su -s /bin/bash www-data -c "php occ app:install user_oidc"
+kubectl exec -n family deploy/nextcloud -- su -s /bin/bash www-data -c "php occ app:enable user_oidc"
+kubectl exec -n family deploy/nextcloud -- su -s /bin/bash www-data -c "php occ user_oidc:provider"
+```
+
+Provider med credentials från secret (bash — i fish, se nedan):
+
+```bash
+CLIENT_ID=$(kubectl get secret nextcloud-secret -n family -o jsonpath='{.data.OIDC_CLIENT_ID}' | base64 -d)
+CLIENT_SECRET=$(kubectl get secret nextcloud-secret -n family -o jsonpath='{.data.OIDC_CLIENT_SECRET}' | base64 -d)
+
+kubectl exec -n family deploy/nextcloud -- su -s /bin/bash www-data -c \
+  "php occ user_oidc:provider authentik \
+    --clientid='${CLIENT_ID}' \
+    --clientsecret='${CLIENT_SECRET}' \
+    --discoveryuri='https://auth.engstrom.live/application/o/nextcloud/.well-known/openid-configuration' \
+    --mapping-groups=groups --group-provisioning=1"
+```
+
+**Fish:**
+
+```fish
+set CID (kubectl get secret nextcloud-secret -n family -o jsonpath='{.data.OIDC_CLIENT_ID}' | base64 -d)
+set CSEC (kubectl get secret nextcloud-secret -n family -o jsonpath='{.data.OIDC_CLIENT_SECRET}' | base64 -d)
+kubectl exec -n family deploy/nextcloud -- su -s /bin/bash www-data -c \
+  "php occ user_oidc:provider authentik --clientid='$CID' --clientsecret='$CSEC' --discoveryuri='https://auth.engstrom.live/application/o/nextcloud/.well-known/openid-configuration' --mapping-groups=groups --group-provisioning=1"
+```
+
+**OBS:** `su www-data` tar bort env vars — kör inte provider-setup med `$OIDC_CLIENT_ID` inuti podden utan explicita värden.
+
+---
+
+## Problem 6: Cron / admin-varningar
+
+**Symptom:** *Cron senaste körning för X dagar sedan*; `kubectl get cronjob -n family` tom.
+
+**Fix:** `cronjob.enabled: true` i Helm. Verifiera:
+
+```bash
+kubectl get cronjob -n family
+kubectl exec -n family deploy/nextcloud -- su -s /bin/bash www-data -c \
+  "php -f /var/www/html/cron.php -- --verbose"
+```
+
+**Mimetype-migration:** Kör manuellt en gång:
+
+```bash
+kubectl exec -n family deploy/nextcloud -- su -s /bin/bash www-data -c \
+  "php occ maintenance:repair --include-expensive"
+```
+
+---
+
+## Problem 7: container not found ("nextcloud")
+
+**Symptom:** `kubectl exec` failar — podden i CrashLoopBackOff.
+
+**Orsak:** Hook eller init failar innan huvudcontainern startar.
+
+**Fix:** `kubectl logs -n family deploy/nextcloud --previous`. Ofta `before-starting`-hook. Vänta på rollout eller fixa hook i Git.
 
 ---
 

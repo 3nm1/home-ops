@@ -75,7 +75,8 @@
           "pages": [
             "01-authentik-oversikt.md",
             "02-oidc-appar.md",
-            "03-forward-auth.md"
+            "03-forward-auth.md",
+            "04-authentik-branding-flows.md"
           ]
         }
       ]
@@ -102,7 +103,8 @@
           "name": "Nextcloud",
           "pages": [
             "01-nextcloud-milestone-1.md",
-            "02-nextcloud-felsokning.md"
+            "02-nextcloud-felsokning.md",
+            "04-nextcloud-anvandare-grupper-skeleton.md"
           ]
         },
         {

@@ -47,7 +47,15 @@ Kolla worker-loggar om det timeoutar: `kubectl logs -n authentik deploy/authenti
 
 ## Secrets
 
-Client ID/secret i 1Password → ExternalSecret → app env vars.
+Client ID/secret i 1Password → ExternalSecret → app env vars. **Authentik är källan** — vid mismatch får du *Client ID is missing or invalid*.
+
+## Fil-lagring och branding
+
+Authentik 2026.x kräver PVC monterad på **`/data`** för logo, favicon och Customization → Files.
+
+Repo: `authentik-data` PVC (2Gi Longhorn) i `kubernetes/apps/security/authentik/app/`.
+
+Se [Authentik — branding och flows](04-authentik-branding-flows.md).
 
 ## Forward-auth vs OIDC
 

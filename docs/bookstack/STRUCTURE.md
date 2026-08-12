@@ -97,11 +97,13 @@ Hylla: Engström Home Lab
 | `book-04-identitet/01-authentik-oversikt.md` | Authentik översikt |
 | `book-04-identitet/02-oidc-appar.md` | OIDC-appar |
 | `book-04-identitet/03-forward-auth.md` | Forward-auth |
+| `book-04-identitet/04-authentik-branding-flows.md` | Authentik branding och flows |
 | `book-05-media/01-pipeline-oversikt.md` | Media pipeline |
 | `book-05-media/02-appar-och-urls.md` | App-lista och URL:er |
 | `book-05-media/03-automation.md` | Automation |
 | `book-06-familj/01-nextcloud-milestone-1.md` | Nextcloud milestone 1 |
 | `book-06-familj/02-nextcloud-felsokning.md` | Nextcloud felsökning |
+| `book-06-familj/04-nextcloud-anvandare-grupper-skeleton.md` | Användare, grupper, skeleton |
 | `book-06-familj/03-framtida-planer.md` | Framtida planer |
 | `book-07-selfhosted/01-appar.md` | Self-hosted appar |
 | `book-08-runbooks/01-flux-reconcile.md` | Flux reconcile |
