@@ -36,6 +36,19 @@ spec:
     global:
       security:
         allowInsecureImages: true
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+      affinity:
+        podAntiAffinity: none
+      volumes:
+        - name: authentik-data
+          persistentVolumeClaim:
+            claimName: authentik-data
+      volumeMounts:
+        - name: authentik-data
+          mountPath: /data
       env:
         - name: AUTHENTIK_HOST
           value: https://auth.${SECRET_DOMAIN}
