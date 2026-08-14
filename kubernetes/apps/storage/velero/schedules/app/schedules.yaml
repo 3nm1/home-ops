@@ -15,6 +15,19 @@ spec:
 apiVersion: velero.io/v1
 kind: Schedule
 metadata:
+  name: daily-family
+spec:
+  schedule: 15 2 * * *
+  template:
+    includedNamespaces:
+      - family
+    snapshotVolumes: false
+    defaultVolumesToFsBackup: true
+    ttl: 720h0m0s
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
   name: daily-authentik
 spec:
   schedule: 30 2 * * *

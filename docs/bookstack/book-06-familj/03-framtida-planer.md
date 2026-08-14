@@ -17,7 +17,8 @@ Se [användare, grupper och skeleton](04-nextcloud-anvandare-grupper-skeleton.md
 - [ ] **Onboarda familjemedlemmar** i Authentik
 - [ ] **Skeleton i GitOps** (`skeletondirectory` i `helmrelease.yaml`)
 - [ ] **Group provisioning i hook** (`--group-provisioning=1` permanent i Git)
-- [ ] **Backup-strategi** för PostgreSQL (Nextcloud + dokumentera RPO/RTO)
+- [x] **Velero `daily-family`** för PostgreSQL + config-PVC
+- [ ] **TrueNAS-backup** verifierad för `/mnt/NFS/family/nextcloud`
 
 ## Nextcloud tema
 
@@ -38,10 +39,10 @@ Kräver extra resurser och egen subdomain — planera separat.
 
 ## Backup
 
-- Userdata redan på TrueNAS (NFS)
-- PostgreSQL på Longhorn — överväg regelbunden DB-backup / Velero för `family`-namespace
-- Velero kör redan `daily-authentik`
-- Dokumentera RPO/RTO när det känns moget
+- Userdata redan på TrueNAS (NFS) — **TrueNAS snapshots/replikering krävs**
+- PostgreSQL + config-PVC: Velero `daily-family` (namespace `family`)
+- Authentik PostgreSQL + branding: Velero `daily-authentik`
+- Se [Återställning](../book-08-runbooks/04-aterstallning.md)
 
 ## Full svenska i Authentik
 
