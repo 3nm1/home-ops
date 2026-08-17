@@ -4,6 +4,33 @@ Markdown-källor för [BookStack](https://bookstack.engstrom.live) (`selfhosted`
 
 Innehållet speglar **BookStacks hierarki**: Hylla → Bok → Kapitel → Sida. Varje `.md`-fil motsvarar en **sida**; mappnamn motsvarar böcker/kapitel.
 
+## Markdown-konvention
+
+Varje sidfil börjar med en **H1-rubrik** (`# Sidtitel`). Den används på två sätt:
+
+| Var | H1 |
+|-----|-----|
+| **Git / Cursor** | Synlig filrubrik — bra vid läsning i repot |
+| **BookStack (ZIP-import)** | Blir sidans **namn**; strippas från sidinnehållet av `build-portable-zip.py` |
+
+Innehållet under H1 börjar med `##` (eller brödtext). Då undviks dubbla rubriker i BookStack (sidnamn + samma rubrik i body).
+
+Exempel:
+
+```markdown
+# Authentik — MFA och recovery
+
+Dokumenterat aug 2026 …
+
+## Översikt
+
+…
+```
+
+**Manuell klistra-in:** hoppa över första `#`-raden i BookStack — använd bara texten från `##` och nedåt (eller kör ZIP-import).
+
+**Valfritt i BookStack UI:** om något sidnamn fortfarande känns dubbelt, se CSS under *Inställningar → Customization → Custom HTML head content* (dölj `h1.break-text`).
+
 ## Importera till BookStack
 
 ### Automatiskt (Portable ZIP)
@@ -24,6 +51,8 @@ ZIP-filer skapas i `docs/bookstack/dist/`. Importera i BookStack:
 4. Upprepa för övriga böcker (en ZIP = en bok med kapitel och sidor).
 
 Strukturen styrs av `manifest.json` (speglar `STRUCTURE.md`). När du lägger till nya sidor: uppdatera manifest, kör scriptet igen, importera om boken (eller bara nya sidor manuellt).
+
+Efter ändringar i Git: bygg om ZIP och importera på nytt — befintliga sidor uppdateras inte automatiskt i BookStack.
 
 ### Manuellt (klistra in markdown)
 

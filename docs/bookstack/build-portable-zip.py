@@ -20,21 +20,37 @@ def load_manifest(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+H1_LINE = re.compile(r"^#\s+(.+?)\s*$")
+
+
 def page_title(markdown: str, fallback: str) -> str:
     for line in markdown.splitlines():
-        match = re.match(r"^#\s+(.+?)\s*$", line)
+        match = H1_LINE.match(line)
         if match:
             return match.group(1).strip()
     return fallback
 
 
+def strip_leading_h1(markdown: str) -> str:
+    """Remove the first H1 line; BookStack uses it as the page name separately."""
+    lines = markdown.splitlines(keepends=True)
+    index = 0
+    while index < len(lines) and not lines[index].strip():
+        index += 1
+    if index >= len(lines) or not H1_LINE.match(lines[index].rstrip("\r\n")):
+        return markdown
+    index += 1
+    while index < len(lines) and not lines[index].strip():
+        index += 1
+    return "".join(lines[index:])
+
 def build_page(page_id: int, path: Path, priority: int) -> dict:
-    markdown = path.read_text(encoding="utf-8")
-    name = page_title(markdown, path.stem.replace("-", " ").title())
+    raw = path.read_text(encoding="utf-8")
+    name = page_title(raw, path.stem.replace("-", " ").title())
     return {
         "id": page_id,
         "name": name,
-        "markdown": markdown,
+        "markdown": strip_leading_h1(raw),
         "priority": priority,
     }
 
