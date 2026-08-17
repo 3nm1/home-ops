@@ -36,7 +36,10 @@ kubectl exec -n authentik deploy/authentik-server -- ls -la /data/media
 | Title | Engströms hemmalabb |
 | Domain | `auth.engstrom.live` |
 | Logo / Favicon | Uppladdade via Files |
-| Authentication flow | `default-authentication-flow` (eller klon) |
+| Authentication flow | `default-authentication-flow` |
+| Recovery flow | `default-recovery-flow` (importerad blueprint — se [MFA och recovery](05-authentik-mfa-och-recovery.md)) |
+
+MFA-konfiguration (stages, enforcement) dokumenteras i [MFA och recovery](05-authentik-mfa-och-recovery.md) — inte här.
 
 ---
 
@@ -97,9 +100,11 @@ Systemtexter (knappar som "Log in") översätts via locale — svagt på svenska
 |------|------------|
 | `default-authentication-flow` | Inloggning |
 | `default-invalidation-flow` | Utloggning |
-| `default-recovery-flow` | Glömt lösenord |
+| `default-recovery-flow` | Glömt lösenord (importera blueprint först) |
 
 Koppla under **System → Brands** (Authentication flow, Invalidation flow, Recovery flow).
+
+Recovery-flow importeras **inte** automatiskt — se [MFA och recovery](05-authentik-mfa-och-recovery.md).
 
 ### Snabbaste förbättringen
 

@@ -69,6 +69,7 @@ Browser → Envoy (internal) → Nextcloud (Apache)
 - Redirect: `https://cloud.engstrom.live/apps/user_oidc/code`
 - App `user_oidc` + provider `authentik` via `before-starting`-hook
 - Group provisioning: `--mapping-groups=groups --group-provisioning=1`
+- Inloggning kräver **Authentik MFA** (TOTP/WebAuthn) — se [MFA och recovery](../book-04-identitet/05-authentik-mfa-och-recovery.md)
 - Detaljer: [användare, grupper och skeleton](04-nextcloud-anvandare-grupper-skeleton.md)
 
 ## E-post (SMTP-relay)

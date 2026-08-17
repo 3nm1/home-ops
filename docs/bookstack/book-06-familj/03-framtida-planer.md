@@ -8,8 +8,10 @@ Pausade idéer att återkomma till.
 - Skeleton directory för nya användare
 - CronJob, Redis, admin-varningar
 - Authentik branding (PVC `/data`, mörkt tema, flows)
+- **MFA** (TOTP + WebAuthn) för alla användare
+- **Recovery flow** (`default-recovery-flow`, e-post + MFA)
 
-Se [användare, grupper och skeleton](04-nextcloud-anvandare-grupper-skeleton.md) och [Authentik branding](../book-04-identitet/04-authentik-branding-flows.md).
+Se [användare, grupper och skeleton](04-nextcloud-anvandare-grupper-skeleton.md), [Authentik branding](../book-04-identitet/04-authentik-branding-flows.md) och [MFA och recovery](../book-04-identitet/05-authentik-mfa-och-recovery.md).
 
 ## Nästa steg (milestone 1.5)
 

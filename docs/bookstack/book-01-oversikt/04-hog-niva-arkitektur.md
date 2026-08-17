@@ -47,6 +47,7 @@
 Användare → Envoy → antingen:
   • Authentik forward-auth (*arr, Sabnzbd, …)
   • OIDC in-app (Homarr, BookStack, Nextcloud, Seerr)
+    → Authentik: lösenord + MFA
   • Ingen auth (Jellyfin internt, vissa verktyg)
 ```
 

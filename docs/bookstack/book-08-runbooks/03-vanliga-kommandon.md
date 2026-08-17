@@ -48,6 +48,13 @@ kubectl exec -n authentik deploy/authentik-server -- ak test_email mottagare@exa
 flux reconcile externalsecret nextcloud -n family --force
 ```
 
+MFA/recovery (UI): [Authentik — MFA och recovery](../book-04-identitet/05-authentik-mfa-och-recovery.md).
+
+| Admin-uppgift | Var |
+|---------------|-----|
+| Tappad MFA-enhet | Directory → Users → MFA Authenticators → Delete |
+| Lösenordsåterställning | Email recovery link / Forgot password |
+
 ## Secrets (base64-dekod)
 
 ```bash

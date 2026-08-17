@@ -6,7 +6,8 @@ Dokumenterat aug 2026 efter OIDC, group folders och skeleton var på plats.
 
 | Vad | Var sköts det |
 |-----|----------------|
-| Inloggning (SSO) | **Authentik** |
+| Inloggning (SSO) | **Authentik** (lösenord + **MFA**) |
+| Lösenordsåterställning | **Authentik** recovery flow |
 | Användarkonto i Nextcloud | Skapas automatiskt vid första OIDC-login (JIT) |
 | Gruppmedlemskap `Familj` | **Authentik** → group provisioning → Nextcloud |
 | Delade mappar (group folders) | **Nextcloud** (kopplas till gruppen `Familj`) |
@@ -131,8 +132,10 @@ Inloggning: `https://cloud.engstrom.live/login?direct=1` (lokal backend).
 
 ## Checklista — ny familjemedlem
 
-1. Skapa användare i **Authentik**
+1. Skapa användare i **Authentik** (fyll i **e-post** — krävs för recovery)
 2. Lägg i grupp **`Familj`**
 3. Ge access till Application **Nextcloud**
-4. Användaren loggar in → JIT-konto + skeleton + grupp `Familj`
+4. Användaren loggar in → lösenord → **MFA-setup** (TOTP eller passkey) → JIT-konto + skeleton + grupp `Familj`
 5. Verifiera access till group folder **Familj**
+
+Se [Authentik — MFA och recovery](../book-04-identitet/05-authentik-mfa-och-recovery.md) vid tappad telefon eller glömt lösenord.

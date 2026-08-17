@@ -39,7 +39,7 @@ Detaljer: [Nextcloud — användare, grupper och skeleton](../book-06-familj/04-
 3. ExternalSecret + env i HelmRelease
 4. Verifiera redirect URI exakt (trailing slash matters ibland)
 5. `flux reconcile externalsecret ... --force`
-6. Testa login i inkognito
+6. Testa login i inkognito (förvänta **MFA** efter lösenord — se [MFA och recovery](05-authentik-mfa-och-recovery.md))
 
 ## Authentik som identitetsnav
 

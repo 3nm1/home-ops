@@ -76,7 +76,8 @@
             "01-authentik-oversikt.md",
             "02-oidc-appar.md",
             "03-forward-auth.md",
-            "04-authentik-branding-flows.md"
+            "04-authentik-branding-flows.md",
+            "05-authentik-mfa-och-recovery.md"
           ]
         }
       ]

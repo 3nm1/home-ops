@@ -26,6 +26,14 @@ Skapa i Authentik UI:
 Slug för Nextcloud: `nextcloud` → discovery URI:
 `https://auth.engstrom.live/application/o/nextcloud/.well-known/openid-configuration`
 
+## MFA och recovery
+
+**MFA** är obligatorisk för alla via `default-authentication-flow` (TOTP + WebAuthn).
+
+**Recovery** (`default-recovery-flow`) importeras från bundled blueprint — finns inte färdigt i ny installation.
+
+Se [Authentik — MFA och recovery](05-authentik-mfa-och-recovery.md) för setup, test och felsökning.
+
 ### E-post (lösenordsåterställning m.m.)
 
 Authentik skickar mail via intern relay (miljövariabler på **server och worker**):
@@ -55,11 +63,11 @@ Authentik 2026.x kräver PVC monterad på **`/data`** för logo, favicon och Cus
 
 Repo: `authentik-data` PVC (2Gi Longhorn) i `kubernetes/apps/security/authentik/app/`.
 
-Se [Authentik — branding och flows](04-authentik-branding-flows.md).
+Se [Authentik — branding och flows](04-authentik-branding-flows.md) och [MFA och recovery](05-authentik-mfa-och-recovery.md).
 
 ## Forward-auth vs OIDC
 
 | Metod | Appar | Hur |
 |-------|-------|-----|
 | **Forward-auth** | *arr, Sabnzbd, Maintainerr, … | Envoy SecurityPolicy → outpost |
-| **OIDC in-app** | Homarr, BookStack, Nextcloud, Seerr | App läser OIDC env, hanterar login själv |
+| **OIDC in-app** | Homarr, BookStack, Nextcloud, Seerr | App läser OIDC env; login via Authentik (MFA) |

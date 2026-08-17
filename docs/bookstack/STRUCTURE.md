@@ -41,7 +41,9 @@ Hylla: Engström Home Lab
 │   ├── Kapitel: Authentik
 │   │   ├── Översikt och URL:er
 │   │   ├── OIDC-appar
-│   │   └── Envoy forward-auth (*arr)
+│   │   ├── Envoy forward-auth (*arr)
+│   │   ├── Branding och flows
+│   │   └── MFA och recovery
 │
 ├── Bok 05: Media stack
 │   ├── Kapitel: Pipeline
@@ -98,6 +100,7 @@ Hylla: Engström Home Lab
 | `book-04-identitet/02-oidc-appar.md` | OIDC-appar |
 | `book-04-identitet/03-forward-auth.md` | Forward-auth |
 | `book-04-identitet/04-authentik-branding-flows.md` | Authentik branding och flows |
+| `book-04-identitet/05-authentik-mfa-och-recovery.md` | Authentik MFA och recovery |
 | `book-05-media/01-pipeline-oversikt.md` | Media pipeline |
 | `book-05-media/02-appar-och-urls.md` | App-lista och URL:er |
 | `book-05-media/03-automation.md` | Automation |
