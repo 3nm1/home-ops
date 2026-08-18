@@ -15,11 +15,20 @@ spec:
         name: longhorn
 
   values:
+    global:
+      tolerations:
+        - key: media.engstrom.live/gpu
+          operator: Equal
+          value: "true"
+          effect: NoSchedule
+
     defaultSettings:
       defaultReplicaCount: 2
       defaultDataPath: /var/mnt/longhorn
       replicaNodeLevelSoftAntiAffinity: true
       backupTarget: nfs://192.168.20.20:/mnt/NFS/longhorn
+      # engine-image, instance-manager, csi-plugin on GPU node (srv-talos04)
+      taintToleration: media.engstrom.live/gpu=true:NoSchedule
 
     persistence:
       defaultClass: true
