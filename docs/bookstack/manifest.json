@@ -130,7 +130,7 @@
       "chapters": [
         {
           "name": "Drift",
-          "pages": ["01-flux-reconcile.md", "02-kluster-halsa.md"]
+          "pages": ["01-flux-reconcile.md", "02-kluster-halsa.md", "05-planerat-proxmox-underhall.md"]
         },
         {
           "name": "Felsökning",

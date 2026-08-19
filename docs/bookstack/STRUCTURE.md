@@ -113,3 +113,4 @@ Hylla: Engström Home Lab
 | `book-08-runbooks/02-kluster-halsa.md` | Klusterhälsa |
 | `book-08-runbooks/03-vanliga-kommandon.md` | Vanliga kommandon |
 | `book-08-runbooks/04-aterstallning.md` | Återställning |
+| `book-08-runbooks/05-planerat-proxmox-underhall.md` | Planerat Proxmox-underhåll |

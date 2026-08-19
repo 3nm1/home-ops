@@ -23,7 +23,7 @@ Orsaker i litet HA-kluster:
 ### Åtgärder
 
 1. **Cordon** överbelastade CP-noder tillfälligt
-2. **Reboot** noder i ordning (en i taget) — börja med minst kritisk
+2. **Reboot** noder i ordning (en i taget) — börja med minst kritisk. Planerat Proxmox-underhåll (RAM, kernel): se [Planerat Proxmox-underhåll](05-planerat-proxmox-underhall.md)
 3. **Minska load** — suspend tunga Flux apps tillfälligt
 4. Överväg att flytta tunga workloads från CP till worker-only (långsiktigt)
 
