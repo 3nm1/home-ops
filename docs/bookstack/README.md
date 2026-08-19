@@ -29,6 +29,28 @@ Dokumenterat aug 2026 …
 
 **Manuell klistra-in:** hoppa över första `#`-raden i BookStack — använd bara texten från `##` och nedåt (eller kör ZIP-import).
 
+## Länkar mellan sidor
+
+Skriv **alltid relativa markdown-länkar** i Git — de fungerar i GitHub/Cursor:
+
+```markdown
+- [Klusterhälsa](02-kluster-halsa.md)
+- [MFA och recovery](../book-04-identitet/05-authentik-mfa-och-recovery.md)
+```
+
+Vid ZIP-bygge skriver `build-portable-zip.py` om `.md`-länkar till BookStack-URL:er utifrån:
+
+| Källa | Mål i BookStack |
+|-------|-----------------|
+| Sidans **H1** | Sid-slug (`Klusterhälsa` → `klusterhalsa`) |
+| Bokmapp `book-08-runbooks` | Bok-slug `bok-08-runbooks` (konfigurerbart i `manifest.json`) |
+
+**Skriv inte** hårdkodade `bookstack.engstrom.live`-länkar i källfilerna — då blir Git-läsning sämre och du underhåller två format.
+
+Om BookStack-sluggen för en bok skiljer sig (t.ex. efter manuell rename i UI), lägg `"slug": "min-bok-slug"` på boken i `manifest.json`.
+
+Externa länkar (`https://…`) och länkar utanför `docs/bookstack/` påverkas inte.
+
 **Valfritt i BookStack UI:** om något sidnamn fortfarande känns dubbelt, se CSS under *Inställningar → Customization → Custom HTML head content* (dölj `h1.break-text`).
 
 ## Importera till BookStack

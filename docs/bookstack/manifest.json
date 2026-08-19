@@ -1,5 +1,10 @@
 {
   "shelf": "Engström Home Lab",
+  "bookstack": {
+    "base_url": "https://bookstack.engstrom.live",
+    "book_dir_prefix": "book-",
+    "book_slug_prefix": "bok-"
+  },
   "books": [
     {
       "dir": "book-01-oversikt",
