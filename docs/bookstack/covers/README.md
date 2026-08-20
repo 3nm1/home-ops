@@ -1,8 +1,16 @@
 # BookStack — omslagsbilder
 
-Omslag för böckerna i hyllan **Engström Home Lab**. Upplöst ~**1920×1080** (16:9); BookStack beskär/skaladar flexibelt — safe zone för titel/ikon: **central ~440×250**.
+Omslag för hyllan **Engström Home Lab** och böckerna i den. Upplöst ~**1920×1080** (16:9); BookStack beskär/skaladar flexibelt — safe zone för titel/ikon: **central ~440×250**.
 
-## Fil → bok
+## Hylla
+
+| Fil | BookStack |
+|-----|-----------|
+| `shelf-engstrom-home-lab.png` | Hylla **Engström Home Lab** |
+
+**Ladda upp:** Hyllor → öppna hyllan → **Redigera** → **Cover image** → spara.
+
+## Böcker
 
 | Fil | Bok (manifest) | BookStack-bok |
 |-----|----------------|---------------|
@@ -17,11 +25,13 @@ Omslag för böckerna i hyllan **Engström Home Lab**. Upplöst ~**1920×1080** 
 
 ## Ladda upp i BookStack
 
+**Hylla:** Hyllor → Engström Home Lab → Redigera → Cover image → `shelf-engstrom-home-lab.png`.
+
+**Böcker:**
+
 1. Öppna boken → **Redigera** (pennikon).
 2. **Cover image** → välj motsvarande PNG.
 3. Spara.
-
-Boktiteln visas i UI ovanför/ bredvid omslaget — exakt stavning i bilden är mindre viktig än igenkänning i hyllvyn.
 
 ## Stil
 

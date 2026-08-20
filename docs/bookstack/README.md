@@ -74,7 +74,7 @@ ZIP-filer skapas i `docs/bookstack/dist/`. Importera i BookStack:
 
 Strukturen styrs av `manifest.json` (speglar `STRUCTURE.md`). När du lägger till nya sidor: uppdatera manifest, kör scriptet igen, importera om boken (eller bara nya sidor manuellt).
 
-**Omslagsbilder:** PNG-filer i [`covers/`](covers/) — ladda upp per bok i BookStack UI (se `covers/README.md`).
+**Omslagsbilder:** PNG-filer i [`covers/`](covers/) — hylla + en per bok i BookStack UI (se `covers/README.md`).
 
 Efter ändringar i Git: bygg om ZIP och importera på nytt — befintliga sidor uppdateras inte automatiskt i BookStack.
 
