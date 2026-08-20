@@ -7,8 +7,6 @@ spec:
   dependsOn:
     - name: longhorn
       namespace: flux-system
-    - name: envoy-gateway
-      namespace: flux-system
   interval: 1h
   path: ./kubernetes/apps/observability/uptime-kuma/app
   postBuild:
