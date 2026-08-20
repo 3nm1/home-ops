@@ -54,6 +54,8 @@ kubectl get httproute -A
 
 Grafana: `grafana.engstrom.live` — dashboards för klusterövervakning.
 
+Uptime Kuma: `uptime-kuma.engstrom.live` — HTTP/ping-checks (ersätter docker-sandbox-instansen).
+
 ## Nextcloud-specifikt
 
 Om cloud.engstrom.live strular men klustret är frisk → se *Nextcloud felsökning*, inte reboot hela klustret.
