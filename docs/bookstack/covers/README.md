@@ -2,6 +2,8 @@
 
 Omslag för hyllan **Engström Home Lab** och böckerna i den. Upplöst ~**1920×1080** (16:9); BookStack beskär/skaladar flexibelt — safe zone för titel/ikon: **central ~440×250**.
 
+**Redigerbara källor:** [`svg/`](svg/) — vektorfiler med lagergrupper (Inkscape). PNG i denna mapp kan exporteras om från SVG.
+
 ## Hylla
 
 | Fil | BookStack |
