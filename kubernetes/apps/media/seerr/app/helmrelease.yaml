@@ -58,12 +58,20 @@ spec:
           http:
             port: *port
     route:
+      # Internal only — Theme Park Lua (EnvoyExtensionPolicy) breaks HTML on external.
       app:
         hostnames: ["seerr.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network
             sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+      external:
+        hostnames: ["seerr.${SECRET_DOMAIN}"]
+        parentRefs:
           - name: envoy-external
             namespace: network
             sectionName: https
