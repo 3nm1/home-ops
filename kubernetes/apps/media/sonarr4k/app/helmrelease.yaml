@@ -27,6 +27,7 @@ spec:
               SONARR__LOG__LEVEL: info
               SONARR__SERVER__PORT: &port 80
               TZ: Europe/Stockholm
+              SONARR__SECURITY__ALLOWEDHOSTS: "sonarr.engstrom.live"
             envFrom:
               - secretRef:
                   name: sonarr4k-secret
