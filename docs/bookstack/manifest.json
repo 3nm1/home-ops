@@ -50,6 +50,14 @@
             "07-nfs-truenas.md",
             "08-smtp-relay.md"
           ]
+        },
+        {
+          "name": "Observability",
+          "pages": [
+            "09-observability-oversikt.md",
+            "10-central-loggning-srv-syslog01.md",
+            "11-loggrotation-och-integritet.md"
+          ]
         }
       ]
     },
@@ -135,7 +143,13 @@
       "chapters": [
         {
           "name": "Drift",
-          "pages": ["01-flux-reconcile.md", "02-kluster-halsa.md", "05-planerat-proxmox-underhall.md"]
+          "pages": [
+            "01-flux-reconcile.md",
+            "02-kluster-halsa.md",
+            "05-planerat-proxmox-underhall.md",
+            "06-srv-syslog01-drift.md",
+            "07-talos04-worker-only.md"
+          ]
         },
         {
           "name": "Felsökning",

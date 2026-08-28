@@ -67,10 +67,10 @@ The Kubernetes cluster is built for:
 ### Cluster roles
 
 - **Control Plane Nodes**
-  Handle API server, scheduler, controller manager, etc.
+  Handle API server, scheduler, controller manager, etcd (talos01–03).
 
 - **Worker Nodes**
-  Run workloads, apps, and whatever I’m experimenting with this week.
+  Workloads and GPU apps on srv-talos04 (worker-only); CP nodes may also run workloads.
 
 ---
 

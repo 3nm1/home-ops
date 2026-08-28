@@ -21,10 +21,14 @@ Hylla: Engström Home Lab
 │   ├── Kapitel: Secrets
 │   │   ├── SOPS och age
 │   │   └── External Secrets + 1Password
-│   └── Kapitel: Lagring
-│       ├── Longhorn
-│       ├── NFS på TrueNAS
-│       └── SMTP-relay (Maddy)
+│   ├── Kapitel: Lagring
+│   │   ├── Longhorn
+│   │   ├── NFS på TrueNAS
+│   │   └── SMTP-relay (Maddy)
+│   └── Kapitel: Observability
+│       ├── Översikt (metrics / loggar / uptime)
+│       ├── Central loggning (srv-syslog01)
+│       └── Logrotation och integritet
 │
 ├── Bok 03: Nätverk
 │   ├── Kapitel: Fysiskt / LAN
@@ -70,7 +74,9 @@ Hylla: Engström Home Lab
 └── Bok 08: Runbooks
     ├── Kapitel: Drift
     │   ├── Flux reconcile
-    │   └── Klusterhälsa (etcd, Longhorn)
+    │   ├── Klusterhälsa (etcd, Longhorn)
+    │   ├── Planerat Proxmox-underhåll
+    │   └── srv-syslog01 drift
     ├── Kapitel: Felsökning
     │   └── Vanliga kommandon
     └── Kapitel: Återställning
@@ -93,6 +99,9 @@ Hylla: Engström Home Lab
 | `book-02-plattform/06-longhorn.md` | Longhorn |
 | `book-02-plattform/07-nfs-truenas.md` | NFS på TrueNAS |
 | `book-02-plattform/08-smtp-relay.md` | SMTP-relay (Maddy + Bahnhof) |
+| `book-02-plattform/09-observability-oversikt.md` | Observability-översikt |
+| `book-02-plattform/10-central-loggning-srv-syslog01.md` | Central loggning (srv-syslog01) |
+| `book-02-plattform/11-loggrotation-och-integritet.md` | Logrotation och integritet |
 | `book-03-natverk/01-vlan-opnsense.md` | VLAN och OPNsense |
 | `book-03-natverk/02-envoy-gateways.md` | Envoy Gateway |
 | `book-03-natverk/03-cloudflare-tls.md` | Cloudflare + TLS |
@@ -114,3 +123,5 @@ Hylla: Engström Home Lab
 | `book-08-runbooks/03-vanliga-kommandon.md` | Vanliga kommandon |
 | `book-08-runbooks/04-aterstallning.md` | Återställning |
 | `book-08-runbooks/05-planerat-proxmox-underhall.md` | Planerat Proxmox-underhåll |
+| `book-08-runbooks/06-srv-syslog01-drift.md` | srv-syslog01 drift |
+| `book-08-runbooks/07-talos04-worker-only.md` | srv-talos04 worker-only |

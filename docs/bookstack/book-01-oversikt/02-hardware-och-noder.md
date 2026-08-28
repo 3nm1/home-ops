@@ -11,14 +11,14 @@
 
 ## Talos-noder (Kubernetes)
 
-Alla fyra kör **control plane + worker** (HA-kluster med 4 CP-noder).
+**3× control plane + worker** (talos01–03) och **1× worker-only** (talos04, GPU).
 
-| VM | Proxmox-värd | IP (VLAN 20) | vCPU | RAM | Notering |
-|----|--------------|--------------|------|-----|----------|
-| srv-talos01 | px-node01 | 192.168.20.151 | 4 | 8 GiB | |
-| srv-talos02 | px-node02 | 192.168.20.152 | 4 | 8 GiB | |
-| srv-talos03 | px-node03 | 192.168.20.153 | 4 | 8 GiB | |
-| srv-talos04 | px-node04 | 192.168.20.154 | 4 | 8 GiB | GPU för Jellyfin |
+| VM | Proxmox-värd | IP (VLAN 20) | vCPU | RAM | Roll | Notering |
+|----|--------------|--------------|------|-----|------|----------|
+| srv-talos01 | px-node01 | 192.168.20.151 | 4 | 8 GiB | CP + worker | |
+| srv-talos02 | px-node02 | 192.168.20.152 | 4 | 8 GiB | CP + worker | |
+| srv-talos03 | px-node03 | 192.168.20.153 | 4 | 8 GiB | CP + worker | |
+| srv-talos04 | px-node04 | 192.168.20.154 | 4 | 8 GiB | **Worker** | GPU för Jellyfin |
 
 - **API VIP:** `192.168.20.150`
 - **Pod CIDR:** `10.42.0.0/16`
@@ -45,6 +45,11 @@ Jellyfin schemaläggs hit för hårdvarutranskodning.
 
 Talos-VM: ~80 GB system + ~700 GB data (`/var/mnt/longhorn` för Longhorn).
 
-## Control plane på alla noder
+## Control plane och worker
 
-`allowSchedulingOnControlPlanes: true` är aktiverat i Talos-patches — CP-noder kör också workloads. Praktiskt i ett litet kluster, men kan ge etcd-prestandaproblem under hög belastning (se runbook *Klusterhälsa*).
+- **talos01–03:** control plane + worker — `allowSchedulingOnControlPlanes: true` i Talos-patches
+- **talos04:** worker-only (GPU) — kör **inte** etcd eller API-server
+
+CP-noder kör också workloads i detta kluster. Det är praktiskt men kan ge etcd-prestandaproblem under hög belastning (se runbook *Klusterhälsa*). Tuna appar bör i första hand schemaläggas på talos04.
+
+Migrering av talos04 till worker-only: [srv-talos04 worker-only](../book-08-runbooks/07-talos04-worker-only.md).

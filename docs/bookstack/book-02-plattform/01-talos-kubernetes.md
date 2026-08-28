@@ -28,9 +28,10 @@ talosctl --nodes 192.168.20.151 dmesg
 
 ## Kubernetes
 
-- **4× control plane** (HA etcd)
+- **3× control plane** (talos01–03, HA etcd, kvorum 2/3)
+- **1× worker** (talos04, GPU)
 - **Cilium** som CNI (Talos inbyggda CNI avstängd)
-- **VIP** för API: `192.168.20.150`
+- **VIP** för API: `192.168.20.150` (talos01–03)
 
 ## Vid nodproblem
 

@@ -13,12 +13,16 @@
               │   VLAN 10/20/…    │
               └─────────┬─────────┘
                         │
-         ┌──────────────┼──────────────┐
-         │              │              │
-   ┌─────▼─────┐  ┌─────▼─────┐  ┌─────▼─────┐
-   │ TrueNAS   │  │ Proxmox   │  │  Cisco    │
-   │ NFS       │  │ 4× Talos  │  │  switches │
-   └─────┬─────┘  └─────┬─────┘  └───────────┘
+         ┌──────────────┼──────────────┬──────────────┐
+         │              │              │              │
+   ┌─────▼─────┐  ┌─────▼─────┐  ┌─────▼─────┐  ┌─────▼─────┐
+   │ TrueNAS   │  │ Proxmox   │  │ srv-      │  │  Cisco    │
+   │ NFS       │  │ 3× CP +   │  │ syslog01  │  │  switches │
+   └─────┬─────┘  └─────┬─────┘  │ rsyslog   │  └───────────┘
+         │              │        │ Loki      │
+         │              │        └─────▲─────┘
+         │              │              │ syslog :514
+         │              └──────────────┘ (OPNsense, Proxmox, …)
          │              │
          │      ┌───────▼───────────────────────────┐
          │      │     Kubernetes (Talos)            │
@@ -65,5 +69,15 @@ Prowlarr → Sonarr/Radarr/Lidarr → Sabnzbd → Unpackerr
 1Password → External Secrets Operator → Kubernetes Secret → Pod
 Git secrets → SOPS/age → Flux decrypt → cluster-secrets
 ```
+
+## Observability (kort)
+
+| Spår | Plats | URL / åtkomst |
+|------|-------|----------------|
+| Metrics | Kluster (`kube-prometheus-stack`) | `grafana.engstrom.live` |
+| Uptime | Kluster (Uptime Kuma) | `uptime-kuma.engstrom.live` |
+| Loggar | srv-syslog01 (extern VM) | Grafana `:3000` på VM; syslog `:514` |
+
+Detaljer: *Plattform → Observability* i BookStack.
 
 Se även repo-root `ARCHITECTURE.md` och `NETWORK.md` för tidigare versioner av samma material.

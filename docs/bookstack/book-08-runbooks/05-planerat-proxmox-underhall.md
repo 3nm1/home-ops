@@ -31,7 +31,7 @@ En Proxmox-värd = en Talos-VM. Reboot av värden tar **en** Kubernetes-nod offl
 Longhorn eviction  →  cordon + drain  →  stoppa VM / reboot Proxmox  →  VM upp  →  Longhorn + uncordon
 ```
 
-Med 4 control plane-noder klarar klustret **en** nod nere (etcd-quorum 3/4). **En Proxmox-värd i taget** — repetera aldrig rolling reboot av alla värdar om det går att undvika.
+Med **3 control plane-noder** klarar klustret **en** CP-nod nere (etcd-kvorum 2/3). Underhåll av **srv-talos04** (worker-only) påverkar inte etcd. **En Proxmox-värd i taget** — repetera aldrig rolling reboot av alla värdar om det går att undvika.
 
 ---
 

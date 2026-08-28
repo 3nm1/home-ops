@@ -28,7 +28,7 @@ Learn modern infrastructure, automate everything, break things in creative ways,
 | srv-talos01 running on px-node01| k3s Control Plane + Worker  | 4 vCPU             | 8GiB | -                               | vg_system 80GB | vg_storage 700GB            |
 | srv-talos02 running on px-node02| k3s Control Plane + Worker  | 4 vCPU             | 8GiB | -                               | vg_system 80GB | vg_storage 700GB            |
 | srv-talos03 running on px-node03| k3s Control Plane + Worker  | 4 vCPU             | 8GiB | -                               | vg_system 80GB | vg_storage 700GB            |
-| srv-talos04 running on px-node04| k3s Control Plane + Worker  | 4 vCPU             | 8GiB | -                               | vg_system 80GB | vg_storage 700GB            |
+| srv-talos04 running on px-node04| k3s Worker (GPU)            | 4 vCPU             | 8GiB | Nvidia P2000, Tesla K80         | vg_system 80GB | vg_storage 700GB            |
 
 Everything is wired into a Cisco network with VLANs for IoT, Management, LAN, Servers, and Cameras — because nothing says “home” like enterprise‑grade segmentation.
 
