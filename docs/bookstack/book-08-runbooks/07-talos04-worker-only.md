@@ -1,123 +1,167 @@
 # srv-talos04: worker-only
 
-Runbook för att **demota** `srv-talos04` från control plane till ren worker-nod.
+Runbook för **srv-talos04** som ren worker-nod (GPU / Jellyfin).
 
-Repot (`talos/talconfig.yaml`) har `controlPlane: false` och **ingen API-VIP** på talos04. Detta dokument beskriver hur du applicerar ändringen på det **levande** klustret.
+Repot: `talos/talconfig.yaml` — `controlPlane: false`, ingen API-VIP, GPU-schematic i `schematic-gpu.yaml`.
 
 ## Målbild
 
 | Nod | Roll |
 |-----|------|
-| srv-talos01–03 | Control plane + worker (`allowSchedulingOnControlPlanes: true`) |
-| srv-talos04 | **Worker only** — GPU, Jellyfin, tunga workloads |
+| srv-talos01–03 | Control plane + worker |
+| srv-talos04 | **Worker only** — GPU |
 
 - **API VIP:** `192.168.20.150` (talos01–03)
 - **etcd:** 3 medlemmar (kvorum 2/3)
 
-## Förutsättningar
+## GPU-schematic (talos04)
 
-- Alla Longhorn-volymer `healthy`
-- Longhorn-manager `1/1` på talos01–03
-- `talosctl --nodes 192.168.20.150 health` grön
-- Planerat underhållsfönster (~30–60 min)
+| | CP-noder (talos01–03) | GPU worker (talos04) |
+|--|----------------------|----------------------|
+| Schematic | `schematic.yaml` | `schematic-gpu.yaml` |
+| Hash (aug 2026) | `e8df334d…` | **`6cbb524…`** |
+| NVIDIA | — | `nonfree-kmod-nvidia-lts`, `nvidia-container-toolkit-lts` |
 
-## 1. etcd-snapshot
+**`-lts` fungerar med Talos v1.13.6.** Install kan ta flera minuter — vänta innan du byter schematic.
+
+Regenerera efter ändring i `schematic-gpu.yaml`:
+
+```bash
+curl -s -X POST -H "Content-Type: text/plain" \
+  --data-binary @schematic-gpu.yaml https://factory.talos.dev/schematics
+# → uppdatera talosImageURL för srv-talos04 i talconfig.yaml
+```
+
+Verifiera på nod:
+
+```bash
+talosctl -n 192.168.20.154 get extensions
+# ska visa nonfree-kmod-nvidia-lts och schematic 6cbb524…
+```
+
+## CP → worker (levande kluster)
+
+**Kräver reset** — `apply-config reboot` utan reset behåller `type: controlplane` och promotar etcd igen.
+
+### Förutsättningar
+
+- Longhorn volymer mestadels `healthy`
+- `talosctl --nodes 192.168.20.150 health` OK
+- **`talconfig.yaml` committad lokalt** — `controlPlane: false` + rätt schematic **innan** `talhelper genconfig`
+
+### 1. etcd-snapshot
 
 ```bash
 talosctl -n 192.168.20.151 etcd snapshot /tmp/etcd-backup-$(date +%F).db
 ```
 
-## 2. Longhorn: evict replikor från talos04 (valfritt)
+### 2. Longhorn evict (valfritt)
 
 ```bash
 kubectl patch nodes.longhorn.io srv-talos04 -n longhorn-system --type=merge \
   -p '{"spec":{"evictionRequested":true,"allowScheduling":false}}'
 ```
 
-Vänta tills replikor flyttats. Kolla i Longhorn UI eller:
-
-```bash
-kubectl get replicas.longhorn.io -n longhorn-system \
-  -o custom-columns=NAME:.metadata.name,NODE:.spec.nodeID,STATE:.status.currentState \
-  | grep srv-talos04
-```
-
-## 3. Cordon och drain
+### 3. Cordon + drain
 
 ```bash
 kubectl cordon srv-talos04
-kubectl drain srv-talos04 \
-  --ignore-daemonsets \
-  --delete-emptydir-data \
-  --force \
-  --grace-period=120
+kubectl drain srv-talos04 --ignore-daemonsets --delete-emptydir-data --force --grace-period=120
 ```
 
-Drain kan fastna på `instance-manager` (PDB) — avbryt med `Ctrl+C` om resten är evicted.
+Avbryt (`Ctrl+C`) om drain fastnar på `instance-manager` (PDB).
 
-## 4. Lämna etcd
+### 4. Lämna etcd
 
 ```bash
 talosctl -n 192.168.20.154 etcd leave
-talosctl -n 192.168.20.151 etcd members
+talosctl -n 192.168.20.151 etcd members   # ska vara 3
 ```
 
-talos04 ska **inte** finnas kvar i medlemslistan.
-
-## 5. Generera och applicera worker-config
+### 5. Generera config — verifiera worker
 
 ```bash
 cd talos
 talhelper genconfig
-just talos apply-node 192.168.20.154 mode=auto
+grep "type:" clusterconfig/kubernetes-srv-talos04.yaml | head -1
+# MÅSTE: type: worker
 ```
 
-Om rollbyte kräver reset (Talos rekommenderar detta vid CP → worker):
+### 6. Reset + apply (maintenance)
 
 ```bash
 talosctl -n 192.168.20.154 reset --reboot --graceful=false
-# När noden är i maintenance:
-just talos apply-node 192.168.20.154 mode=auto
 ```
 
-**Obs:** Reset wipear systemdisken. Longhorn-data på `/var/mnt/longhorn` ligger på `!system_disk` (UserVolumeConfig) och bör överleva, men räkna med att replikor rebuildar om något går fel.
+Om boot disk saknas efter reset — boota **GPU-ISO** i Proxmox:
 
-## 6. Städa Kubernetes-registrering
-
-Om gammal nod-post finns kvar efter reset:
-
-```bash
-kubectl delete node srv-talos04
-kubectl get node srv-talos04 -w
+```
+https://factory.talos.dev/image/6cbb52469113114e47c80217d808377a5bbc346de554f8ca8d52b3e897925e56/v1.13.6/noinsecure-amd64.iso
 ```
 
-## 7. Efter join
+När maintenance visar `192.168.20.154`:
 
 ```bash
+talosctl apply-config -n 192.168.20.154 \
+  -f clusterconfig/kubernetes-srv-talos04.yaml \
+  --insecure --mode=auto
+```
+
+Ta bort ISO och sätt boot order till disk efter install.
+
+### 7. Kubernetes + Longhorn
+
+```bash
+kubectl delete node srv-talos04   # om gammal CP-post finns
+kubectl get nodes -w
 kubectl uncordon srv-talos04
 kubectl patch nodes.longhorn.io srv-talos04 -n longhorn-system --type=merge \
   -p '{"spec":{"allowScheduling":true,"evictionRequested":false}}'
-talosctl -n 192.168.20.150 health
 ```
+
+### 8. GPU labels/taints
+
+Ska komma från `patches/nodes/srv-talos04-nvidia.yaml`. Verifiera:
+
+```bash
+kubectl get node srv-talos04 --show-labels | tr ',' '\n' | grep nvidia
+kubectl get node srv-talos04 -o jsonpath='{.spec.taints}{"\n"}'
+```
+
+Om saknas efter apply — tillfällig fix:
+
+```bash
+kubectl label node srv-talos04 nvidia.com/gpu.present=true media.engstrom.live/gpu-transcode=true
+kubectl taint node srv-talos04 media.engstrom.live/gpu=true:NoSchedule
+kubectl rollout restart deployment gpu-operator -n gpu-operator
+```
+
+Permanent: `just talos apply-node 192.168.20.154 reboot` (efter korrekt genconfig).
 
 ## Verifiering
 
 ```bash
-kubectl get node srv-talos04
-# ROLES ska INTE innehålla control-plane
-
+kubectl get node srv-talos04                    # ROLES: <none> (worker — normalt)
+talosctl -n 192.168.20.154 get machineconfig -o yaml | grep "type:"  # worker
 kubectl get pods -n kube-system --field-selector spec.nodeName=srv-talos04
-# Ska INTE ha kube-apiserver, kube-scheduler, kube-controller-manager
-
+# INTE kube-apiserver / scheduler / controller-manager
+talosctl -n 192.168.20.151 etcd members       # 3 medlemmar
+kubectl describe node srv-talos04 | grep nvidia.com/gpu
 kubectl get pods -n media -l app.kubernetes.io/name=jellyfin -o wide
-# Ska landa på srv-talos04 (nodeSelector)
 ```
 
-## Vid problem
+## just-syntax
 
-| Problem | Åtgärd |
-|---------|--------|
-| `etcd leave` misslyckas | `talosctl -n 192.168.20.151 etcd remove-member <ID>` från healthy CP |
-| Nod joinar inte | Kolla `talosctl -n 192.168.20.154 dmesg`, applicera config igen |
-| Longhorn degraded efter reset | Vänta 15–30 min; radera inte replikor manuellt |
-| Jellyfin inte på talos04 | Kolla GPU-taint och nodeSelector i `kubernetes/apps/media/jellyfin/` |
+```bash
+just talos apply-node 192.168.20.154 reboot   # rätt
+just talos apply-node 192.168.20.154 mode=auto  # FEL
+```
+
+## Vanliga misstag
+
+| Misstag | Konsekvens |
+|---------|------------|
+| `controlPlane: true` i talconfig vid genconfig | `type: controlplane`, etcd rejoin |
+| Apply utan reset vid rollbyte | CP kvar, etcd promotar igen |
+| `git checkout` under install | Fel schematic i repot vs kluster |
+| Radera inte ISO efter maintenance boot | Boot loop eller fel version |

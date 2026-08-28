@@ -1,10 +1,22 @@
-# Talos Image Factory schematic for srv-talos04 (NVIDIA P2000) - regenerate ID with:
-#   curl -s -X POST -H "Content-Type: text/plain" --data-binary @schematic-gpu.yaml https://factory.talos.dev/schematics
+# Talos Image Factory schematic for srv-talos04 (NVIDIA P2000).
+#
+# Regenerate schematic ID after changes:
+#   curl -s -X POST -H "Content-Type: text/plain" \
+#     --data-binary @schematic-gpu.yaml https://factory.talos.dev/schematics
+#
+# Copy the returned hash into talconfig.yaml → srv-talos04 → talosImageURL.
+#
+# Notes (aug 2026):
+# - Factory uses *-lts extensions for Talos v1.13.x (non-lts names may still resolve,
+#   but -lts is current). Compatible with talenv.yaml talosVersion v1.13.6.
+# - Install/boot can take several minutes while extensions load — not a failure.
+# - ISO for maintenance/recovery (match talosVersion):
+#   https://factory.talos.dev/image/<SCHEMATIC_ID>/v1.13.6/noinsecure-amd64.iso
 customization:
   systemExtensions:
     officialExtensions:
       - siderolabs/intel-ucode
       - siderolabs/iscsi-tools
       - siderolabs/util-linux-tools
-      - siderolabs/nonfree-kmod-nvidia
-      - siderolabs/nvidia-container-toolkit
+      - siderolabs/nonfree-kmod-nvidia-lts
+      - siderolabs/nvidia-container-toolkit-lts

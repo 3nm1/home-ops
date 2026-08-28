@@ -29,9 +29,11 @@ talosctl --nodes 192.168.20.151 dmesg
 ## Kubernetes
 
 - **3× control plane** (talos01–03, HA etcd, kvorum 2/3)
-- **1× worker** (talos04, GPU)
+- **1× worker** (talos04, GPU — egen schematic, se `schematic-gpu.yaml`)
 - **Cilium** som CNI (Talos inbyggda CNI avstängd)
 - **VIP** för API: `192.168.20.150` (talos01–03)
+
+Migrering / worker-only: [srv-talos04 worker-only](../book-08-runbooks/07-talos04-worker-only.md).
 
 ## Vid nodproblem
 
