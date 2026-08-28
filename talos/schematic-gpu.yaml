@@ -6,5 +6,5 @@ customization:
       - siderolabs/intel-ucode
       - siderolabs/iscsi-tools
       - siderolabs/util-linux-tools
-      - siderolabs/nonfree-kmod-nvidia
-      - siderolabs/nvidia-container-toolkit
+      - siderolabs/nonfree-kmod-nvidia-lts
+      - siderolabs/nvidia-container-toolkit-lts
