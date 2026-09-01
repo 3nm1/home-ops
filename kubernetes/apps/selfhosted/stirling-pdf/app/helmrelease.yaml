@@ -20,11 +20,11 @@ spec:
               repository: docker.stirlingpdf.com/stirlingtools/stirling-pdf
               tag: 2.14.3
             env:
-              DISABLE_ADDITIONAL_FEATURES: "true"
+              DISABLE_ADDITIONAL_FEATURES: "false"
               METRICS_ENABLED: "true"
               PGID: "1000"
               PUID: "1000"
-              SECURITY_ENABLELOGIN: "false"
+              SECURITY_ENABLELOGIN: "true"
               SYSTEM_DEFAULTLOCALE: sv-SE
               SYSTEM_MAXFILESIZE: "100"
               TZ: Europe/Stockholm
