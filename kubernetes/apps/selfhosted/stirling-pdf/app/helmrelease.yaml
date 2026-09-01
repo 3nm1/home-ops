@@ -25,6 +25,8 @@ spec:
               PGID: "1000"
               PUID: "1000"
               SECURITY_ENABLELOGIN: "true"
+              SECURITY_INITIALLOGIN_USERNAME: "enmi"
+              SECURITY_INITIALLOGIN_PASSWORD: "${SECRET_STIRLING_PDF_PASSWORD}"
               SYSTEM_DEFAULTLOCALE: sv-SE
               SYSTEM_MAXFILESIZE: "100"
               TZ: Europe/Stockholm
