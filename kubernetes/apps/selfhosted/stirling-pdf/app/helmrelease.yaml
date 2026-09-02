@@ -28,13 +28,13 @@ spec:
               SECURITY_INITIALLOGIN_USERNAME:
                 valueFrom:
                   secretKeyRef:
-                    name: stirling-admin # Namnet på din target.name i ExternalSecret
+                    name: stirling-secret # Namnet på din target.name i ExternalSecret
                     key: admin-user
               # 2. Hämta lösenordet från ExternalSecret (admin-password)
               SECURITY_INITIALLOGIN_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: stirling-admin
+                    name: stirling-secret
                     key: admin-password
               SYSTEM_DEFAULTLOCALE: sv-SE
               SYSTEM_MAXFILESIZE: "100"
