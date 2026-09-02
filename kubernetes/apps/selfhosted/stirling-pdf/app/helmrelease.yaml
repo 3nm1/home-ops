@@ -25,8 +25,17 @@ spec:
               PGID: "1000"
               PUID: "1000"
               SECURITY_ENABLELOGIN: "true"
-              SECURITY_INITIALLOGIN_USERNAME: "enmi"
-              SECURITY_INITIALLOGIN_PASSWORD: "${SECRET_STIRLING_PDF_PASSWORD}"
+              SECURITY_INITIALLOGIN_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: stirling-admin # Namnet på din target.name i ExternalSecret
+                    key: admin-user
+              # 2. Hämta lösenordet från ExternalSecret (admin-password)
+              SECURITY_INITIALLOGIN_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: stirling-admin
+                    key: admin-password
               SYSTEM_DEFAULTLOCALE: sv-SE
               SYSTEM_MAXFILESIZE: "100"
               TZ: Europe/Stockholm
