@@ -25,21 +25,14 @@ spec:
               PGID: "1000"
               PUID: "1000"
               SECURITY_ENABLELOGIN: "true"
-              SECURITY_INITIALLOGIN_USERNAME:
-                valueFrom:
-                  secretKeyRef:
-                    name: stirling-secret # Namnet på din target.name i ExternalSecret
-                    key: admin-user
-              # 2. Hämta lösenordet från ExternalSecret (admin-password)
-              SECURITY_INITIALLOGIN_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: stirling-secret
-                    key: admin-password
               SYSTEM_DEFAULTLOCALE: sv-SE
               SYSTEM_MAXFILESIZE: "100"
+              SYSTEM_SHOW_DEFAULT_LOGIN_CREDENTIALS: "false"
               TZ: Europe/Stockholm
               UI_APPNAME: Stirling PDF
+            envFrom:
+              - secretRef:
+                  name: stirling-secret
             probes:
               startup:
                 enabled: true
