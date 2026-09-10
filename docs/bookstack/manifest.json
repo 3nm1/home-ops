@@ -148,7 +148,8 @@
             "02-kluster-halsa.md",
             "05-planerat-proxmox-underhall.md",
             "06-srv-syslog01-drift.md",
-            "07-talos04-worker-only.md"
+            "07-talos04-worker-only.md",
+            "08-zerotier-controller-lxc-lab.md"
           ]
         },
         {

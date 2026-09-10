@@ -125,3 +125,4 @@ Hylla: Engström Home Lab
 | `book-08-runbooks/05-planerat-proxmox-underhall.md` | Planerat Proxmox-underhåll |
 | `book-08-runbooks/06-srv-syslog01-drift.md` | srv-syslog01 drift |
 | `book-08-runbooks/07-talos04-worker-only.md` | srv-talos04 worker-only |
+| `book-08-runbooks/08-zerotier-controller-lxc-lab.md` | ZeroTier controller (Proxmox LXC, lab) |
