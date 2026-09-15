@@ -187,7 +187,7 @@ kubectl run -n selfhosted mail-in-test --rm -it --restart=Never \
 
 | Symptom | Åtgärd |
 |---------|--------|
-| Pod CrashLoop | `kubectl logs` — ofta saknad `/data/tls`; kolla PVC mount |
+| Pod CrashLoop | `kubectl logs` — saknad `/data/maddy.conf` (PVC maskerar image-config; fixat via ConfigMap) eller saknad `/data/tls` |
 | Inget mail från internet | MX? Port 25 forward? ISP block? |
 | Mail i spam | SPF + DKIM + DMARC; riktigt TLS-cert; PTR (sällan hemma) |
 | IMAP login fail | Kör både `creds create` **och** `imap-acct create` |
