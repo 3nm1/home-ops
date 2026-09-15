@@ -99,6 +99,7 @@ Hylla: Engström Home Lab
 | `book-02-plattform/06-longhorn.md` | Longhorn |
 | `book-02-plattform/07-nfs-truenas.md` | NFS på TrueNAS |
 | `book-02-plattform/08-smtp-relay.md` | SMTP-relay (Maddy + Bahnhof) |
+| `book-02-plattform/12-sa7mie-mail.md` | sa7mie.se inkommande mail (Maddy) |
 | `book-02-plattform/09-observability-oversikt.md` | Observability-översikt |
 | `book-02-plattform/10-central-loggning-srv-syslog01.md` | Central loggning (srv-syslog01) |
 | `book-02-plattform/11-loggrotation-och-integritet.md` | Logrotation och integritet |

@@ -14,3 +14,4 @@ resources:
   - ./homebox/ks.yaml
   - ./bookstack/ks.yaml
   - ./smtp-relay/ks.yaml
+  - ./sa7mie-mail/ks.yaml

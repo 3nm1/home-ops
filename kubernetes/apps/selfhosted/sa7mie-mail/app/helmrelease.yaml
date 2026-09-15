@@ -1,0 +1,112 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sa7mie-mail
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: sa7mie-mail
+  interval: 1h
+  values:
+    controllers:
+      sa7mie-mail:
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          bootstrap-tls:
+            image:
+              repository: docker.io/library/alpine
+              tag: "3.21"
+            command:
+              - sh
+              - -c
+              - |
+                apk add --no-cache openssl >/dev/null
+                mkdir -p /data/tls
+                if [ ! -f /data/tls/privkey.pem ]; then
+                  openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+                    -keyout /data/tls/privkey.pem \
+                    -out /data/tls/fullchain.pem \
+                    -subj "/CN=mail.sa7mie.se"
+                  echo "Created bootstrap self-signed TLS cert in /data/tls"
+                fi
+            securityContext:
+              runAsUser: 0
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+        containers:
+          app:
+            image:
+              repository: ghcr.io/foxcpp/maddy
+              tag: 0.9.5@sha256:de42151adff6388edb5e4ee88f60334fa1ab85e309485193ecb1c2db20203315
+            env:
+              MADDY_DOMAIN: sa7mie.se
+              MADDY_HOSTNAME: mail.sa7mie.se
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: &smtp 25
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 30
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *smtp
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *smtp
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 0
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: sa7mie-mail
+        forceRename: sa7mie-mail
+        type: LoadBalancer
+        annotations:
+          lbipam.cilium.io/ips: 192.168.20.144
+        externalTrafficPolicy: Local
+        ports:
+          smtp:
+            port: 25
+            targetPort: 25
+          submission:
+            port: 587
+            targetPort: 587
+          imaps:
+            port: 993
+            targetPort: 993
+    persistence:
+      data:
+        existingClaim: sa7mie-mail
+        globalMounts:
+          - path: /data

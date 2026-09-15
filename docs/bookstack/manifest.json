@@ -48,7 +48,8 @@
           "pages": [
             "06-longhorn.md",
             "07-nfs-truenas.md",
-            "08-smtp-relay.md"
+            "08-smtp-relay.md",
+            "12-sa7mie-mail.md"
           ]
         },
         {
