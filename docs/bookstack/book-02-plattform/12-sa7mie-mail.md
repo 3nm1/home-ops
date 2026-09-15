@@ -64,11 +64,13 @@ Ersätt `DIN_PUBLIKA_IP` med er faktiska WAN-IP (samma som OPNsense WAN).
 
 | Typ | Host | Värde | TTL |
 |-----|------|-------|-----|
-| **A** | `mail` | `DIN_PUBLIKA_IP` | 300 |
+| **A** | `mail` | `217.27.189.65` (WAN — **inte** gamla Loopia-IP) | 300 |
 | **MX** | `@` | `mail.sa7mie.se` (prio **10**) | 300 |
-| **TXT** (SPF) | `@` | `v=spf1 ip4:DIN_PUBLIKA_IP -all` | 300 |
-| **TXT** (DKIM) | `default._domainkey` | *(från Maddy efter start — se nedan)* | 300 |
+| **TXT** (SPF) | `@` | `v=spf1 ip4:217.27.189.65 -all` | 300 |
+| **TXT** (DKIM) | `default._domainkey` | *(från `/data/dkim_keys/sa7mie.se_default.dns`)* | 300 |
 | **TXT** (DMARC) | `_dmarc` | `v=DMARC1; p=none; rua=mailto:postmaster@sa7mie.se` | 300 |
+
+> **`@` A → 194.9.94.x`** (Loopia-parkering) påverkar **inte** MX-leverans om MX pekar på `mail.sa7mie.se` — men **`mail` måste ha egen A-post** mot WAN. Wildcard `*` till 194.9.94.x täcker `mail` om ingen explicit `mail`-post finns — **lägg alltid explicit `mail` A**.
 
 ---
 
@@ -118,13 +120,19 @@ Klientinställningar:
 
 ---
 
-## DKIM (efter första start)
+## DKIM
+
+Maddy skapar nycklar under **`/data/dkim_keys/`** (inte `/data/dkim/`). Filnamn: `sa7mie.se_default.dns`.
+
+Nycklar genereras vid **första utgående signerade mail**, eller manuellt:
 
 ```bash
-kubectl exec -n selfhosted deploy/sa7mie-mail -- cat /data/dkim/default.dns
+kubectl exec -n selfhosted deploy/sa7mie-mail -- maddy dkim generate sa7mie.se default
+kubectl exec -n selfhosted deploy/sa7mie-mail -- ls -la /data/dkim_keys/
+kubectl exec -n selfhosted deploy/sa7mie-mail -- cat /data/dkim_keys/sa7mie.se_default.dns
 ```
 
-Kopiera TXT-värdet till Loopia som `default._domainkey.sa7mie.se`.
+Kopiera TXT-värdet till Loopia som **`default._domainkey`** (full FQDN: `default._domainkey.sa7mie.se`).
 
 ---
 
