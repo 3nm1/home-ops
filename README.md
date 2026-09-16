@@ -22,13 +22,13 @@ Learn modern infrastructure, automate everything, break things in creative ways,
 | System     | Role                | CPU                | RAM  | Graphics                         | Disk (boot)    | Disk (storage)              |
 |------------|---------------------|--------------------|------|----------------------------------|----------------|-----------------------------|
 | px-node01  | Proxmox Node        | 1× Xeon E5-2697 v2 | 32GiB | Nvidia Quadro T400              | Kingston 120GB | 2× PNY 1TB                  |
-| px-node02  | Proxmox Node        | 2× Xeon E5-2690 v2 | 32GiB | -                               | Kingston 120GB | PNY 1TB, Kingston 1TB       |
+| px-node02  | Proxmox Node        | 2× Xeon E5-2690 v2 | 64GiB | -                               | Kingston 120GB | PNY 1TB, Kingston 1TB       |
 | px-node03  | Proxmox Node        | 2× Xeon E5504      | 32GiB | -                               | Kingston 120GB | PNY 1TB, Kingston 1TB       |
 | px-node04  | Proxmox Node        | 1× Xeon E5-2683 v4 | 48GiB | Nvidia Quadro P2000, Tesla K80  | WDC 120GB      | PNY 1TB, Kingston 1TB       |
-| srv-talos01 running on px-node01| k3s Control Plane + Worker  | 4 vCPU             | 8GiB | -                               | vg_system 80GB | vg_storage 700GB            |
-| srv-talos02 running on px-node02| k3s Control Plane + Worker  | 4 vCPU             | 8GiB | -                               | vg_system 80GB | vg_storage 700GB            |
-| srv-talos03 running on px-node03| k3s Control Plane + Worker  | 4 vCPU             | 8GiB | -                               | vg_system 80GB | vg_storage 700GB            |
-| srv-talos04 running on px-node04| k3s Worker (GPU)            | 4 vCPU             | 8GiB | Nvidia P2000, Tesla K80         | vg_system 80GB | vg_storage 700GB            |
+| srv-talos01 running on px-node01| k3s Control Plane + Worker  | 4 vCPU             | 16GiB | -                               | vg_system 80GB | vg_storage 700GB            |
+| srv-talos02 running on px-node02| k3s Control Plane + Worker  | 4 vCPU             | 32GiB | -                               | vg_system 80GB | vg_storage 700GB            |
+| srv-talos03 running on px-node03| k3s Control Plane + Worker  | 4 vCPU             | 16GiB | -                               | vg_system 80GB | vg_storage 700GB            |
+| srv-talos04 running on px-node04| k3s Worker (GPU)            | 4 vCPU             | 16GiB | Nvidia P2000, Tesla K80         | vg_system 80GB | vg_storage 700GB            |
 
 Everything is wired into a Cisco network with VLANs for IoT, Management, LAN, Servers, and Cameras — because nothing says “home” like enterprise‑grade segmentation.
 
