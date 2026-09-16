@@ -24,7 +24,7 @@ Appar som använder **OpenID Connect** direkt (inte forward-auth).
 - **Group provisioning:** `--mapping-groups=groups --group-provisioning=1`
 - **Credentials:** Client ID/secret i 1Password måste matcha Authentik-providern
 
-Detaljer: [Nextcloud — användare, grupper och skeleton](../book-06-familj/04-nextcloud-anvandare-grupper-skeleton.md)
+Detaljer: [Nextcloud — användare, grupper och skeleton](../book-06-familjetjanster/04-nextcloud-anvandare-grupper-skeleton.md)
 
 ## Seerr
 

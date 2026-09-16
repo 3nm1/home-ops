@@ -255,7 +255,7 @@ def main() -> int:
         action="append",
         dest="books",
         metavar="DIR",
-        help="Only build selected book dir(s), e.g. book-06-familj",
+        help="Only build selected book dir(s), e.g. book-06-familjetjanster",
     )
     parser.add_argument(
         "--no-link-rewrite",

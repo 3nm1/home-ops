@@ -21,7 +21,7 @@ Omslag för hyllan **Engström Home Lab** och böckerna i den. Upplöst ~**1920�
 | `book-03-natverk.png` | `book-03-natverk` | Nätverk |
 | `book-04-identitet.png` | `book-04-identitet` | Identitet & säkerhet |
 | `book-05-media.png` | `book-05-media` | Media stack |
-| `book-06-familj.png` | `book-06-familj` | Familjetjänster |
+| `book-06-familj.png` | `book-06-familjetjanster` | Familjetjänster |
 | `book-07-selfhosted.png` | `book-07-selfhosted` | Self-hosted verktyg |
 | `book-08-runbooks.png` | `book-08-runbooks` | Runbooks |
 

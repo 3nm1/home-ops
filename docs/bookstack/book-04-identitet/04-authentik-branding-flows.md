@@ -151,4 +151,4 @@ Uppdatera provider i Nextcloud (eller vänta på pod restart + `before-starting`
 | App-access | Applications → Nextcloud → bindings |
 | Nextcloud-grupp (auto) | Group provisioning vid login |
 
-Se även [Nextcloud — användare, grupper och skeleton](../book-06-familj/04-nextcloud-anvandare-grupper-skeleton.md).
+Se även [Nextcloud — användare, grupper och skeleton](../book-06-familjetjanster/04-nextcloud-anvandare-grupper-skeleton.md).

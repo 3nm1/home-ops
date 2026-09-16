@@ -76,7 +76,7 @@ velero restore create family-restore --from-backup daily-family-<timestamp> -n v
 
 1. NFS-data kvar på TrueNAS → användarfiler säkra
 2. Velero restore av `family`-namespace **eller** recreate PVC + Helm
-3. Om tom DB: se [Nextcloud felsökning](../book-06-familj/02-nextcloud-felsokning.md) — `occ maintenance:install` / manuell install
+3. Om tom DB: se [Nextcloud felsökning](../book-06-familjetjanster/02-nextcloud-felsokning.md) — `occ maintenance:install` / manuell install
 4. OIDC hooks (`before-starting`) konfigurerar Authentik igen från Git
 
 ### Scenario B — TrueNAS förlorad

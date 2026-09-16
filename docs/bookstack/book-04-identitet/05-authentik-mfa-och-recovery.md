@@ -191,5 +191,5 @@ Alla användare som ska kunna återställa lösenord behöver **Email** i Authen
 - [Authentik — översikt](01-authentik-oversikt.md) — SMTP, gateways
 - [Authentik — branding och flows](04-authentik-branding-flows.md) — brand, svenska flow-titlar
 - [OIDC-appar](02-oidc-appar.md) — appar som använder samma login
-- [Nextcloud — användare och grupper](../book-06-familj/04-nextcloud-anvandare-grupper-skeleton.md) — onboarding familj
+- [Nextcloud — användare och grupper](../book-06-familjetjanster/04-nextcloud-anvandare-grupper-skeleton.md) — onboarding familj
 - [SMTP-relay](../book-02-plattform/08-smtp-relay.md) — mailväg för recovery

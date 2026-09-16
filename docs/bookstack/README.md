@@ -62,7 +62,7 @@ BookStack stödjer [Portable ZIP-formatet](https://github.com/BookStackApp/BookS
 ```bash
 python docs/bookstack/build-portable-zip.py
 # eller en bok i taget:
-python docs/bookstack/build-portable-zip.py --book book-06-familj
+python docs/bookstack/build-portable-zip.py --book book-06-familjetjanster
 ```
 
 ZIP-filer skapas i `docs/bookstack/dist/`. Importera i BookStack:
@@ -77,6 +77,28 @@ Strukturen styrs av `manifest.json` (speglar `STRUCTURE.md`). När du lägger ti
 **Omslagsbilder:** PNG-filer i [`covers/`](covers/) — hylla + en per bok i BookStack UI (se `covers/README.md`).
 
 Efter ändringar i Git: bygg om ZIP och importera på nytt — befintliga sidor uppdateras inte automatiskt i BookStack.
+
+### Importera om hela hyllan (ren start)
+
+När Git och BookStack har divergerat (många nya/omdöpta sidor) är det enklast att **ta bort böckerna i BookStack** och importera alla ZIP igen från repot.
+
+1. **Uppdatera källor i Git** — `manifest.json` och `STRUCTURE.md` ska matcha filträdet.
+2. **Bygg alla ZIP:**
+
+   ```bash
+   python docs/bookstack/build-portable-zip.py
+   ```
+
+   ZIP-filer hamnar i `docs/bookstack/dist/` (en per bok i `manifest.json`).
+
+3. **I BookStack** (`https://bookstack.engstrom.live`):
+   - Skapa hyllan **Engström Home Lab** om den saknas.
+   - Ta bort gamla böcker på hyllan (eller hela hyllan och skapa om).
+   - **Inställningar → Import** → ladda upp varje `book-XX-….zip` från `dist/`.
+4. **Omslagsbilder** — sätt igen enligt [`covers/README.md`](covers/README.md) ( ingår inte i ZIP-import).
+5. **Snabbkoll** — bläddra igenom nya sidor (t.ex. *sa7mie-mail*, *srv-talos04 worker-only*, *ZeroTier LXC*).
+
+> Portable ZIP **ersätter/uppdaterar** innehåll vid import per bok — du behöver inte rensa sid för sid om bokstrukturen är oförändrad. Vid stora omstruktureringar (nya kapitel, borttagna sidor) är **borttag + omimport** renare.
 
 ### Manuellt (klistra in markdown)
 
@@ -100,7 +122,7 @@ Uppdatera gärna **Git först**, kör `build-portable-zip.py`, importera ZIP til
 | Bok | Syfte |
 |-----|--------|
 | 01 Översikt | Varför, hardware, resan hittills |
-| 02 Plattform | Talos, Flux, secrets, storage, **SMTP-relay** |
+| 02 Plattform | Talos, Flux, secrets, storage, **SMTP-relay**, **sa7mie-mail** |
 | 03 Nätverk | VLAN, Envoy, Cloudflare, TLS |
 | 04 Identitet | Authentik, OIDC, forward-auth |
 | 05 Media | *arr, Jellyfin, automation |
