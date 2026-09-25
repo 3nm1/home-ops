@@ -12,7 +12,7 @@ spec:
     strategyType: Recreate
     image:
       repository: ghcr.io/homarr-labs/homarr
-      tag: v1.76.0
+      tag: v1.77.2
     env:
       TZ: Europe/Stockholm
       LOG_LEVEL: info
