@@ -25,6 +25,7 @@ spec:
               LIDARR__AUTH__REQUIRED: DisabledForLocalAddresses
               LIDARR__LOG__DBENABLED: "False"
               LIDARR__LOG__LEVEL: info
+              LIDARR__SERVER__ALLOWEDHOSTS: lidarr.${SECRET_DOMAIN},lidarr.media.svc.cluster.local,localhost
               LIDARR__SERVER__PORT: &port 80
               TZ: Europe/Stockholm
             envFrom:
@@ -38,6 +39,9 @@ spec:
                   httpGet:
                     path: /ping
                     port: *port
+                    httpHeaders:
+                      - name: Host
+                        value: localhost
                   periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 5
