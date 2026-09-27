@@ -6,6 +6,7 @@ resources:
   - ./helmrelease.yaml
   - ./ocirepository.yaml
   - ./pvc.yaml
-  # Theme Park Lua: pilot on Radarr only (other *arr keep Lua disabled in kustomization).
-  - ./themepark-lua-configmap.yaml
-  - ./envoyextensionpolicy.yaml
+  # Theme Park Envoy Lua disabled (Radarr v6+ → HTTP 500; deleting EnvoyExtensionPolicy fixes it).
+  # CSS route /css on theme-park chart remains optional; HTML injection not supported here.
+  # - ./themepark-lua-configmap.yaml
+  # - ./envoyextensionpolicy.yaml
