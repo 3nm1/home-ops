@@ -7,5 +7,6 @@ resources:
   - ./helmrelease.yaml
   - ./ocirepository.yaml
   - ./pvc.yaml
-  - ./themepark-lua-configmap.yaml
-  - ./envoyextensionpolicy.yaml
+  # Theme Park Lua disabled — see radarr kustomization.
+  # - ./themepark-lua-configmap.yaml
+  # - ./envoyextensionpolicy.yaml

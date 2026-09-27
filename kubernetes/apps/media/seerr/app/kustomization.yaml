@@ -7,5 +7,6 @@ resources:
   - ./pvc.yaml
   - ./externalsecret.yaml
   - ./configmap.yaml
-  - ./themepark-lua-configmap.yaml
-  - ./envoyextensionpolicy.yaml
+  # Theme Park Lua disabled — see radarr kustomization.
+  # - ./themepark-lua-configmap.yaml
+  # - ./envoyextensionpolicy.yaml
