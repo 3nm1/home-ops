@@ -5,16 +5,54 @@ metadata:
   name: radarr-themepark-lua
 data:
   lua: |
+    -- Pilot: Radarr only. Fail open — never return 500 from Lua.
+    local MAX_BODY_BYTES = 65536
+    local THEME_MARKER = "/css/base/radarr/hotline.css"
+
+    local function should_skip_path(path)
+      if path == nil or path == "" then
+        return true
+      end
+      local path_only = path
+      local q = string.find(path, "?", 1, true)
+      if q ~= nil then
+        path_only = string.sub(path, 1, q - 1)
+      end
+      if path_only == "/" or path_only == "/index.html" then
+        return false
+      end
+      if string.find(path, "/api/", 1, true) then
+        return true
+      end
+      if string.find(path, "/signalr", 1, true) then
+        return true
+      end
+      if string.find(path, "/ping", 1, true) then
+        return true
+      end
+      if string.find(path, "%.%w+$") then
+        return true
+      end
+      return true
+    end
+
     function envoy_on_request(request_handle)
-      -- Ensure upstream HTML is uncompressed so the response body can be rewritten.
-      request_handle:headers():remove("accept-encoding")
+      pcall(function()
+        local path = request_handle:headers():get(":path")
+        if should_skip_path(path) then
+          return
+        end
+        request_handle:headers():remove("accept-encoding")
+      end)
     end
 
     function envoy_on_response(response_handle)
-      -- Fail open: Lua errors or oversized HTML must not break the upstream app (500).
-      local MAX_BODY_BYTES = 524288
-
       pcall(function()
+        local encoding = response_handle:headers():get("content-encoding")
+        if encoding ~= nil and encoding ~= "" then
+          return
+        end
+
         local content_type = response_handle:headers():get("content-type")
         if content_type == nil or not string.find(string.lower(content_type), "text/html", 1, true) then
           return
@@ -23,6 +61,14 @@ data:
         local status = response_handle:headers():get(":status")
         if status == nil or not string.find(status, "^2", 1) then
           return
+        end
+
+        local content_length = response_handle:headers():get("content-length")
+        if content_length ~= nil then
+          local len = tonumber(content_length)
+          if len ~= nil and (len == 0 or len > MAX_BODY_BYTES) then
+            return
+          end
         end
 
         local body = response_handle:body()
@@ -40,8 +86,7 @@ data:
           return
         end
 
-        local body_pos = string.find(string.lower(content), "</body>", 1, true)
-        if body_pos == nil then
+        if string.find(content, THEME_MARKER, 1, true) then
           return
         end
 
@@ -49,9 +94,18 @@ data:
     <link rel="stylesheet" type="text/css" href="/css/base/radarr/hotline.css">
     ]]
 
-        local updated = string.sub(content, 1, body_pos - 1)
+        local lower = string.lower(content)
+        local inject_pos = string.find(lower, "</head>", 1, true)
+        if inject_pos == nil then
+          inject_pos = string.find(lower, "</body>", 1, true)
+        end
+        if inject_pos == nil then
+          return
+        end
+
+        local updated = string.sub(content, 1, inject_pos - 1)
           .. theme_links
-          .. string.sub(content, body_pos)
+          .. string.sub(content, inject_pos)
 
         body:setBytes(updated)
         response_handle:headers():remove("content-length")

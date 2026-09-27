@@ -6,7 +6,6 @@ resources:
   - ./helmrelease.yaml
   - ./ocirepository.yaml
   - ./pvc.yaml
-  # Theme Park Lua disabled: body rewrite breaks *arr v6+ through Envoy (HTTP 500).
-  # CSS still served via theme-park HTTPRoute /css on each hostname.
-  # - ./themepark-lua-configmap.yaml
-  # - ./envoyextensionpolicy.yaml
+  # Theme Park Lua: pilot on Radarr only (other *arr keep Lua disabled in kustomization).
+  - ./themepark-lua-configmap.yaml
+  - ./envoyextensionpolicy.yaml
