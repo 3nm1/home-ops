@@ -11,41 +11,49 @@ data:
     end
 
     function envoy_on_response(response_handle)
-      local content_type = response_handle:headers():get("content-type")
-      if content_type == nil or not string.find(string.lower(content_type), "text/html", 1, true) then
-        return
-      end
+      local MAX_BODY_BYTES = 524288
 
-      local status = response_handle:headers():get(":status")
-      if status == nil or not string.find(status, "^2", 1) then
-        return
-      end
+      pcall(function()
+        local content_type = response_handle:headers():get("content-type")
+        if content_type == nil or not string.find(string.lower(content_type), "text/html", 1, true) then
+          return
+        end
 
-      local body = response_handle:body()
-      if body == nil or body:length() == 0 then
-        return
-      end
+        local status = response_handle:headers():get(":status")
+        if status == nil or not string.find(status, "^2", 1) then
+          return
+        end
 
-      local content = tostring(body:getBytes(0, body:length()))
-      if content == nil or content == "" then
-        return
-      end
+        local body = response_handle:body()
+        if body == nil then
+          return
+        end
 
-      local theme_links = [[
+        local body_len = body:length()
+        if body_len == 0 or body_len > MAX_BODY_BYTES then
+          return
+        end
+
+        local content = body:getBytes(0, body_len)
+        if content == nil or content == "" then
+          return
+        end
+
+        local body_pos = string.find(string.lower(content), "</body>", 1, true)
+        if body_pos == nil then
+          return
+        end
+
+        local theme_links = [[
     <link rel="stylesheet" type="text/css" href="/css/base/overseerr/hotline.css">
     ]]
 
-      local updated = content
-      local body_pos = string.find(string.lower(updated), "</body>", 1, true)
-      if body_pos ~= nil then
-        updated = string.sub(updated, 1, body_pos - 1)
+        local updated = string.sub(content, 1, body_pos - 1)
           .. theme_links
-          .. string.sub(updated, body_pos)
-      end
+          .. string.sub(content, body_pos)
 
-      if updated ~= content then
         body:setBytes(updated)
         response_handle:headers():remove("content-length")
         response_handle:headers():remove("content-encoding")
-      end
+      end)
     end
