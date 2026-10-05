@@ -30,11 +30,8 @@ spec:
                 enabled: true
                 custom: true
                 spec:
-                  exec:
-                    command:
-                      - sh
-                      - -c
-                      - mysqladmin ping -h 127.0.0.1 -u root -p"${MYSQL_ROOT_PASSWORD}"
+                  tcpSocket:
+                    port: &port 3306
                   periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 30
@@ -42,11 +39,8 @@ spec:
                 enabled: true
                 custom: true
                 spec:
-                  exec:
-                    command:
-                      - sh
-                      - -c
-                      - mysqladmin ping -h 127.0.0.1 -u root -p"${MYSQL_ROOT_PASSWORD}"
+                  tcpSocket:
+                    port: *port
                   periodSeconds: 30
                   timeoutSeconds: 5
                   failureThreshold: 5
@@ -54,11 +48,8 @@ spec:
                 enabled: true
                 custom: true
                 spec:
-                  exec:
-                    command:
-                      - sh
-                      - -c
-                      - mysqladmin ping -h 127.0.0.1 -u root -p"${MYSQL_ROOT_PASSWORD}"
+                  tcpSocket:
+                    port: *port
                   periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 5
@@ -78,7 +69,7 @@ spec:
         forceRename: xibo-mysql
         ports:
           mysql:
-            port: &port 3306
+            port: 3306
     persistence:
       data:
         existingClaim: xibo-mysql

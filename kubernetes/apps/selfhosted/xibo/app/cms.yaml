@@ -32,9 +32,7 @@ spec:
               - -c
               - |
                 set -e
-                for d in custom backup userscripts ca-certs theme; do
-                  mkdir -p "/staging/${d}"
-                done
+                mkdir -p /staging/custom /staging/backup /staging/userscripts /staging/ca-certs /staging/theme
             securityContext:
               runAsUser: 0
         containers:
