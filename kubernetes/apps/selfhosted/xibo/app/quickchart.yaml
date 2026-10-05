@@ -1,0 +1,53 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: xibo-quickchart
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: xibo
+  interval: 1h
+  values:
+    controllers:
+      xibo-quickchart:
+        strategy: Recreate
+        containers:
+          app:
+            image:
+              repository: docker.io/ianw/quickchart
+              tag: latest
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 3400
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+    service:
+      app:
+        controller: xibo-quickchart
+        forceRename: xibo-quickchart
+        ports:
+          http:
+            port: *port

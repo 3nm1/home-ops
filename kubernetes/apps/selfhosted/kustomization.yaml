@@ -13,5 +13,6 @@ resources:
   - ./homarr/ks.yaml
   - ./homebox/ks.yaml
   - ./bookstack/ks.yaml
+  - ./xibo/ks.yaml
   - ./smtp-relay/ks.yaml
   - ./sa7mie-mail/ks.yaml

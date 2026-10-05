@@ -1,0 +1,55 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: xibo-memcached
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: xibo
+  interval: 1h
+  values:
+    controllers:
+      xibo-memcached:
+        strategy: Recreate
+        containers:
+          app:
+            image:
+              repository: docker.io/library/memcached
+              tag: alpine
+            args:
+              - memcached
+              - -m
+              - "15"
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: &port 11211
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+    service:
+      app:
+        controller: xibo-memcached
+        forceRename: xibo-memcached
+        ports:
+          memcached:
+            port: *port

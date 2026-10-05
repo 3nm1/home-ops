@@ -1,0 +1,143 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: xibo-cms
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: xibo
+  interval: 1h
+  values:
+    controllers:
+      xibo-cms:
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          wait-for-mysql:
+            image:
+              repository: docker.io/library/busybox
+              tag: "1.38"
+            command:
+              - sh
+              - -c
+              - until nc -z xibo-mysql 3306; do echo waiting for mysql; sleep 2; done
+          init-dirs:
+            image:
+              repository: docker.io/library/busybox
+              tag: "1.38"
+            command:
+              - sh
+              - -c
+              - |
+                set -e
+                for d in custom backup userscripts ca-certs theme; do
+                  mkdir -p "/staging/${d}"
+                done
+            securityContext:
+              runAsUser: 0
+        containers:
+          app:
+            image:
+              repository: ghcr.io/xibosignage/xibo-cms
+              tag: release-4.5.3
+            env:
+              MYSQL_HOST: xibo-mysql
+              MYSQL_PORT: "3306"
+              MYSQL_DATABASE: cms
+              MYSQL_USER: cms
+              XMR_HOST: xibo-xmr
+              CMS_USE_MEMCACHED: "true"
+              MEMCACHED_HOST: xibo-memcached
+              CMS_SERVER_NAME: xibo.${SECRET_DOMAIN}
+              CMS_QUICK_CHART_URL: http://xibo-quickchart:3400
+              CMS_SMTP_SERVER: smtp-relay.selfhosted.svc.cluster.local:25
+              CMS_SMTP_USE_TLS: "NO"
+              CMS_SMTP_USE_STARTTLS: "NO"
+              CMS_SMTP_FROM_LINE_OVERRIDE: "YES"
+            envFrom:
+              - secretRef:
+                  name: xibo-secret
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 80
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 60
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                memory: 1Gi
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 0
+        fsGroup: 33
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: xibo-cms
+        forceRename: xibo-cms
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: ["xibo.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      cms-data:
+        existingClaim: xibo-cms
+        advancedMounts:
+          xibo-cms:
+            init-dirs:
+              - path: /staging
+            app:
+              - path: /var/www/cms/custom
+                subPath: custom
+              - path: /var/www/backup
+                subPath: backup
+              - path: /var/www/cms/web/userscripts
+                subPath: userscripts
+              - path: /var/www/cms/ca-certs
+                subPath: ca-certs
+              - path: /var/www/cms/web/theme/custom
+                subPath: theme
+      library:
+        existingClaim: xibo-library
+        globalMounts:
+          - path: /var/www/cms/library

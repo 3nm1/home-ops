@@ -14,6 +14,7 @@ Repo: `kubernetes/apps/selfhosted/`
 | **Homebox** | `homebox.engstrom.live` | Lokalt | PVC |
 | **Stirling PDF** | `stirling-pdf.engstrom.live` | — | — |
 | **IT-Tools** | `it-tools.engstrom.live` | — | — |
+| **Xibo CMS** | `xibo.engstrom.live` | Lokalt (CMS) | MySQL + Longhorn (library) |
 
 ## Homarr
 
@@ -42,6 +43,15 @@ Se [sa7mie.se mail](../book-02-plattform/12-sa7mie-mail.md).
 ## Stirling PDF & IT-Tools
 
 Utility-appar utan SSO — enkla verktyg i webbläsaren.
+
+## Xibo CMS
+
+Digital signage (skyltar/skärmar). Stacken följer [xibosignage/xibo-docker](https://github.com/xibosignage/xibo-docker): **cms-web**, **MySQL 8.4**, **XMR**, **Memcached**, **QuickChart**.
+
+- **Webb:** HTTPS via Envoy (`xibo.${SECRET_DOMAIN}`).
+- **XMR (spelare):** LoadBalancer `192.168.20.145:9505` — spelare på LAN/WAN måste nå denna adress (konfigurera i CMS under inställningar efter installation).
+- **Secrets:** 1Password `xibo` — `MYSQL_PASSWORD` och `MYSQL_ROOT_PASSWORD` (endast alfanumeriska tecken, ~16 tecken, inga specialtecken enligt Xibo).
+- **E-post:** intern `smtp-relay` (samma mönster som BookStack).
 
 ## Gemensamt mönster
 
