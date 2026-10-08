@@ -76,7 +76,12 @@ Hylla: Engström Home Lab
     │   ├── Flux reconcile
     │   ├── Klusterhälsa (etcd, Longhorn)
     │   ├── Planerat Proxmox-underhåll
-    │   └── srv-syslog01 drift
+    │   ├── srv-syslog01 drift
+    │   ├── srv-talos04 worker-only
+    │   ├── ZeroTier controller (lab)
+    │   ├── Pterodactyl på srv-mc01
+    │   ├── Pterodactyl — extra Wings-nod
+    │   └── Minecraft survival — PvP och byhandel
     ├── Kapitel: Felsökning
     │   └── Vanliga kommandon
     └── Kapitel: Återställning
@@ -127,3 +132,7 @@ Hylla: Engström Home Lab
 | `book-08-runbooks/06-srv-syslog01-drift.md` | srv-syslog01 drift |
 | `book-08-runbooks/07-talos04-worker-only.md` | srv-talos04 worker-only |
 | `book-08-runbooks/08-zerotier-controller-lxc-lab.md` | ZeroTier controller (Proxmox LXC, lab) |
+| `book-08-runbooks/09-pterodactyl-srv-mc01.md` | Pterodactyl på srv-mc01 |
+| `book-08-runbooks/11-pterodactyl-extra-nod.md` | Pterodactyl — extra Wings-nod |
+| `book-08-runbooks/10-minecraft-survival-pvp-byhandel.md` | Minecraft survival — PvP och byhandel |
+| `book-08-runbooks/12-xibo-drift-och-aterstallning.md` | Xibo — drift, MySQL 8.4, admin-reset |

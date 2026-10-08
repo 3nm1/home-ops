@@ -52,6 +52,7 @@ Digital signage (skyltar/skärmar). Stacken följer [xibosignage/xibo-docker](ht
 - **XMR (spelare):** LoadBalancer `192.168.20.145:9505` — spelare på LAN/WAN måste nå denna adress (konfigurera i CMS under inställningar efter installation).
 - **Secrets:** 1Password `xibo` — `MYSQL_PASSWORD` och `MYSQL_ROOT_PASSWORD` (endast alfanumeriska tecken, ~16 tecken, inga specialtecken enligt Xibo).
 - **E-post:** intern `smtp-relay` (samma mönster som BookStack).
+- **Drift/felsökning:** [Xibo drift och återställning](../book-08-runbooks/12-xibo-drift-och-aterstallning.md) (MySQL ska vara tag **`8.4`**, inte Renovate-förslag som `26.7`).
 
 ## Gemensamt mönster
 

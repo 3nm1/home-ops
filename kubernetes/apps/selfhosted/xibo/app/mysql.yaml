@@ -18,7 +18,8 @@ spec:
           app:
             image:
               repository: docker.io/library/mysql
-              tag: "26.7"
+              # Must match xibosignage/xibo-docker (MySQL 8.4 LTS). Do not use Renovate bumps here.
+              tag: "8.4"
             env:
               MYSQL_DATABASE: cms
               MYSQL_USER: cms

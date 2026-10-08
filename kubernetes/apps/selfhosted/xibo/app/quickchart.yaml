@@ -16,7 +16,7 @@ spec:
           app:
             image:
               repository: docker.io/ianw/quickchart
-              tag: latest
+              tag: v1.8.1
             probes:
               liveness:
                 enabled: true

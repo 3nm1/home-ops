@@ -150,7 +150,11 @@
             "05-planerat-proxmox-underhall.md",
             "06-srv-syslog01-drift.md",
             "07-talos04-worker-only.md",
-            "08-zerotier-controller-lxc-lab.md"
+            "08-zerotier-controller-lxc-lab.md",
+            "09-pterodactyl-srv-mc01.md",
+            "11-pterodactyl-extra-nod.md",
+            "10-minecraft-survival-pvp-byhandel.md",
+            "12-xibo-drift-och-aterstallning.md"
           ]
         },
         {

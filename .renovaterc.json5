@@ -182,6 +182,12 @@
       automerge: false,
     },
     {
+      description: "Xibo stack tracks xibosignage/xibo-docker — manual bumps only (MySQL major must stay 8.4)",
+      matchFileNames: ["kubernetes/apps/selfhosted/xibo/**"],
+      matchDatasources: ["docker"],
+      enabled: false,
+    },
+    {
       matchManagers: ["github-actions"],
       addLabels: ["renovate/github-action"],
     },

@@ -19,9 +19,6 @@ spec:
             image:
               repository: ghcr.io/xibosignage/xibo-xmr
               tag: "1.3"
-            envFrom:
-              - secretRef:
-                  name: xibo-secret
             probes:
               liveness:
                 enabled: true
