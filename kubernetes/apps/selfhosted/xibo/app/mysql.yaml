@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: docker.io/library/mysql
-              tag: "8.4"
+              tag: "26.7"
             env:
               MYSQL_DATABASE: cms
               MYSQL_USER: cms
