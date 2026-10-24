@@ -21,7 +21,7 @@ Learn modern infrastructure, automate everything, break things in creative ways,
 
 | System     | Role                | CPU                | RAM  | Graphics                         | Disk (boot)    | Disk (storage)              |
 |------------|---------------------|--------------------|------|----------------------------------|----------------|-----------------------------|
-| px-node01  | Proxmox Node        | 1× Xeon E5-2697 v2 | 94,1§GiB | Nvidia Quadro T400              | Kingston 120GB | 2× PNY 1TB                  |
+| px-node01  | Proxmox Node        | 1× Xeon E5-2697 v2 | 94,21GiB | Nvidia Quadro T400              | Kingston 120GB | 2× PNY 1TB                  |
 | px-node02  | Proxmox Node        | 2× Xeon E5-2690 v2 | 62,83GiB | -                               | Kingston 120GB | PNY 1TB, Kingston 1TB       |
 | px-node03  | Proxmox Node        | 2× Xeon E5504      | 31,38GiB | -                               | Kingston 120GB | PNY 1TB, Kingston 1TB       |
 | px-node04  | Proxmox Node        | 1× Xeon E5-2683 v4 | 62,68GiB | Nvidia Quadro P2000, Tesla K80  | WDC 120GB      | PNY 1TB, Kingston 1TB       |
