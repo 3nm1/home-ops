@@ -34,7 +34,9 @@ spec:
               UN_LOG_LEVEL: info
               UN_WEBSERVER_METRICS: "true"
               UN_WEBSERVER_LISTEN_ADDR: 0.0.0.0:5656
-              UN_WEBSERVER_UI_PASSWORD: noauth
+              # Trust Envoy/Cilium pod CIDR; identity from Authentik forward-auth headers.
+              UN_WEBSERVER_UPSTREAMS_0: 10.42.0.0/16
+              UN_WEBSERVER_UI_PASSWORD: webauth:X-authentik-username
               UN_WEBSERVER_ROLES_metrics_PERMISSIONS_0: system:metrics:read
               UN_WEBSERVER_API_KEYS_0_NAME: prometheus
               UN_WEBSERVER_API_KEYS_0_ROLES_0: metrics
