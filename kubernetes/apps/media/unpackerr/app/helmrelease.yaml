@@ -8,12 +8,32 @@ spec:
     kind: OCIRepository
     name: unpackerr
   interval: 1h
+  timeout: 10m
+  upgrade:
+    disableWait: true
+    remediation:
+      retries: 3
+  install:
+    remediation:
+      retries: 3
   values:
     controllers:
       unpackerr:
         strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          init-config:
+            image:
+              repository: docker.io/library/busybox
+              tag: "1.38"
+            command:
+              - sh
+              - -c
+              - mkdir -p /config && chown 1000:1000 /config
+            securityContext:
+              runAsUser: 0
+              runAsNonRoot: false
         containers:
           app:
             image:
@@ -24,7 +44,6 @@ spec:
               UN_LOG_LEVEL: info
               UN_WEBSERVER_METRICS: "true"
               UN_WEBSERVER_LISTEN_ADDR: 0.0.0.0:5656
-              # Protected by Authentik forward-auth on HTTPRoute; do not set empty UI_PASSWORD.
               UN_WEBSERVER_UI_PASSWORD: noauth
               UN_WEBSERVER_API_KEYS_0_NAME: prometheus
               UN_WEBSERVER_API_KEYS_0_ROLES_0: system:metrics:read
@@ -79,16 +98,16 @@ spec:
                 custom: true
                 spec:
                   tcpSocket:
-                    port: &port 5656
+                    port: 5656
                   periodSeconds: 10
                   timeoutSeconds: 5
-                  failureThreshold: 30
+                  failureThreshold: 60
               liveness:
                 enabled: true
                 custom: true
                 spec:
                   tcpSocket:
-                    port: *port
+                    port: 5656
                   periodSeconds: 30
                   timeoutSeconds: 5
                   failureThreshold: 5
@@ -97,7 +116,7 @@ spec:
                 custom: true
                 spec:
                   tcpSocket:
-                    port: *port
+                    port: 5656
                   periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 5
@@ -120,25 +139,20 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
+        controller: unpackerr
+        forceRename: unpackerr
         ports:
           http:
-            port: *port
-    route:
-      app:
-        hostnames: ["unpackerr.${SECRET_DOMAIN}"]
-        parentRefs:
-          - name: envoy-internal
-            namespace: network
-            sectionName: https
-        rules:
-          - backendRefs:
-              - identifier: app
-                port: *port
+            port: 5656
     persistence:
       config:
         existingClaim: unpackerr
-        globalMounts:
-          - path: /config
+        advancedMounts:
+          unpackerr:
+            init-config:
+              - path: /config
+            app:
+              - path: /config
       data:
         type: nfs
         server: 192.168.20.20
