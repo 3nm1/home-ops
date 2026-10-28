@@ -18,11 +18,21 @@ spec:
           app:
             image:
               repository: ghcr.io/unpackerr/unpackerr
-              tag: v0.16.1
+              tag: v1.0.0
             env:
               TZ: Europe/Stockholm
               UN_LOG_LEVEL: info
               UN_WEBSERVER_METRICS: "true"
+              UN_WEBSERVER_LISTEN_ADDR: 0.0.0.0:5656
+              # Protected by Authentik forward-auth on HTTPRoute; do not set empty UI_PASSWORD.
+              UN_WEBSERVER_UI_PASSWORD: noauth
+              UN_WEBSERVER_API_KEYS_0_NAME: prometheus
+              UN_WEBSERVER_API_KEYS_0_ROLES_0: system:metrics:read
+              UN_WEBSERVER_API_KEYS_0_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: unpackerr-secret
+                    key: METRICS_API_KEY
               UN_SONARR_0_URL: http://sonarr.media.svc.cluster.local
               UN_SONARR_0_PROTOCOLS: usenet,UsenetDownloadProtocol
               UN_SONARR_0_PATHS_0: /data
@@ -64,10 +74,33 @@ spec:
                     name: lidarr-secret
                     key: LIDARR__AUTH__APIKEY
             probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: &port 5656
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 30
               liveness:
                 enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
               readiness:
                 enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -88,16 +121,24 @@ spec:
     service:
       app:
         ports:
-          metrics:
-            port: 5656
-    serviceMonitor:
+          http:
+            port: *port
+    route:
       app:
-        enabled: true
-        endpoints:
-          - port: metrics
-            path: /metrics
-            interval: 30s
+        hostnames: ["unpackerr.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
     persistence:
+      config:
+        existingClaim: unpackerr
+        globalMounts:
+          - path: /config
       data:
         type: nfs
         server: 192.168.20.20

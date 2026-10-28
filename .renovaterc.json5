@@ -188,6 +188,19 @@
       enabled: false,
     },
     {
+      description: "Unpackerr v1 — config/UI/metrics change together; bump manually after testing",
+      matchFileNames: ["kubernetes/apps/media/unpackerr/**"],
+      matchDatasources: ["docker"],
+      enabled: false,
+    },
+    {
+      description: "Radarr 7 is pre-release (.NET 10) — stay on 6.x until stable",
+      matchDatasources: ["docker"],
+      matchDepNames: ["ghcr.io/home-operations/radarr"],
+      matchUpdateTypes: ["major"],
+      enabled: false,
+    },
+    {
       matchManagers: ["github-actions"],
       addLabels: ["renovate/github-action"],
     },

@@ -11,7 +11,7 @@ Skyddar media-appar **utan** att appen själv implementerar OIDC.
 - Prowlarr, Sonarr, Radarr, Lidarr, Bazarr
 - Sonarr4k, Radarr4k
 - Sabnzbd
-- Maintainerr, Profilarr, Apprise
+- Maintainerr, Profilarr, Apprise, Unpackerr
 
 ## Flöde
 
@@ -23,7 +23,7 @@ Browser → Envoy → forward-auth check → Authentik login → tillbaka → ap
 
 - **Jellyfin** — ingen Authentik (familjevänligt, eget auth)
 - **Seerr** — OIDC in-app istället
-- **Recyclarr / Unpackerr / Autoscan** — typiskt utan publik URL
+- **Recyclarr / Autoscan** — typiskt utan publik URL
 
 ## Theme Park
 
