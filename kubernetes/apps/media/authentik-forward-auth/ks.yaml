@@ -18,7 +18,6 @@ spec:
     - name: maintainerr
     - name: profilarr
     - name: apprise
-    - name: unpackerr
   interval: 1h
   path: ./kubernetes/apps/media/authentik-forward-auth/app
   postBuild:

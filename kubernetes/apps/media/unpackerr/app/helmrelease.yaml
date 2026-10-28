@@ -12,28 +12,18 @@ spec:
   upgrade:
     disableWait: true
     remediation:
-      retries: 3
+      remediateLastFailure: false
+      retries: 0
   install:
     remediation:
-      retries: 3
+      remediateLastFailure: false
+      retries: 0
   values:
     controllers:
       unpackerr:
         strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          init-config:
-            image:
-              repository: docker.io/library/busybox
-              tag: "1.38"
-            command:
-              - sh
-              - -c
-              - mkdir -p /config && chown 1000:1000 /config
-            securityContext:
-              runAsUser: 0
-              runAsNonRoot: false
         containers:
           app:
             image:
@@ -147,12 +137,8 @@ spec:
     persistence:
       config:
         existingClaim: unpackerr
-        advancedMounts:
-          unpackerr:
-            init-config:
-              - path: /config
-            app:
-              - path: /config
+        globalMounts:
+          - path: /config
       data:
         type: nfs
         server: 192.168.20.20

@@ -26,7 +26,8 @@ När du lägger till en ny `*.engstrom.live`-host (t.ex. Unpackerr):
 1. **HTTPRoute** + **SecurityPolicy** i Git (som övriga media-appar).
 2. **Authentik:** samma **Proxy provider** som Sonarr/Radarr — lägg till **External host** `https://<app>.engstrom.live` (eller motsvarande wildcard som redan täcker subdomänen).
 3. Verifiera **DNS** (samma som t.ex. `apprise.engstrom.live` → internal gateway `192.168.20.140`).
-4. `flux reconcile helmrelease <app> -n media` om HTTPRoute saknas trots Running pod.
+4. Lägg **inte** ömsesidiga `dependsOn` mellan app-kustomization och `authentik-forward-auth` (Flux deadlock).
+5. `flux reconcile helmrelease <app> -n media` om HTTPRoute saknas trots Running pod.
 
 ## Undantag
 

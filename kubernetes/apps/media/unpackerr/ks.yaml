@@ -9,8 +9,6 @@ spec:
       namespace: external-secrets
     - name: longhorn
       namespace: flux-system
-    - name: authentik-forward-auth
-      namespace: media
     - name: sonarr
     - name: sonarr4k
     - name: radarr
