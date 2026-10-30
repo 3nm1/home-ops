@@ -8,6 +8,16 @@ spec:
     kind: OCIRepository
     name: unpackerr
   interval: 1h
+  timeout: 10m
+  upgrade:
+    disableWait: true
+    remediation:
+      remediateLastFailure: false
+      retries: 0
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 0
   values:
     controllers:
       unpackerr:
@@ -18,11 +28,23 @@ spec:
           app:
             image:
               repository: ghcr.io/unpackerr/unpackerr
-              tag: v0.16.1
+              tag: v1.0.0
             env:
               TZ: Europe/Stockholm
               UN_LOG_LEVEL: info
               UN_WEBSERVER_METRICS: "true"
+              UN_WEBSERVER_LISTEN_ADDR: 0.0.0.0:5656
+              # Trust Envoy/Cilium pod CIDR; identity from Authentik forward-auth headers.
+              UN_WEBSERVER_UPSTREAMS_0: 10.42.0.0/16
+              UN_WEBSERVER_UI_PASSWORD: webauth:X-authentik-username
+              UN_WEBSERVER_ROLES_metrics_PERMISSIONS_0: system:metrics:read
+              UN_WEBSERVER_API_KEYS_0_NAME: prometheus
+              UN_WEBSERVER_API_KEYS_0_ROLES_0: metrics
+              UN_WEBSERVER_API_KEYS_0_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: unpackerr-secret
+                    key: METRICS_API_KEY
               UN_SONARR_0_URL: http://sonarr.media.svc.cluster.local
               UN_SONARR_0_PROTOCOLS: usenet,UsenetDownloadProtocol
               UN_SONARR_0_PATHS_0: /data
@@ -64,10 +86,33 @@ spec:
                     name: lidarr-secret
                     key: LIDARR__AUTH__APIKEY
             probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 5656
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 60
               liveness:
                 enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 5656
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
               readiness:
                 enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 5656
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -87,17 +132,16 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
+        controller: unpackerr
+        forceRename: unpackerr
         ports:
-          metrics:
+          http:
             port: 5656
-    serviceMonitor:
-      app:
-        enabled: true
-        endpoints:
-          - port: metrics
-            path: /metrics
-            interval: 30s
     persistence:
+      config:
+        existingClaim: unpackerr
+        globalMounts:
+          - path: /config
       data:
         type: nfs
         server: 192.168.20.20

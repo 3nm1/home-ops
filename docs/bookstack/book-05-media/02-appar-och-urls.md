@@ -19,6 +19,7 @@ Basdomän: `engstrom.live` (via `${SECRET_DOMAIN}`).
 | Maintainerr | `maintainerr.engstrom.live` | forward-auth |
 | Profilarr | `profilarr.engstrom.live` | forward-auth |
 | Apprise | `apprise.engstrom.live` | forward-auth |
+| Unpackerr | `unpackerr.engstrom.live` | forward-auth (v1 Web UI) |
 | Theme Park | `theme-park.engstrom.live` | — |
 
 ## Interna (ingen/intern URL)
@@ -26,7 +27,6 @@ Basdomän: `engstrom.live` (via `${SECRET_DOMAIN}`).
 | App | Syfte |
 |-----|--------|
 | Recyclarr | TRaSH guide sync till *arr |
-| Unpackerr | Post-process downloads |
 | Autoscan | Jellyfin scan triggers |
 | Deduparr | Hitta dubbletter i Radarr/Sonarr |
 

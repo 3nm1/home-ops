@@ -1,0 +1,19 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: unpackerr
+spec:
+  namespaceSelector:
+    matchNames:
+      - media
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: unpackerr
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      bearerTokenSecret:
+        name: unpackerr-secret
+        key: METRICS_API_KEY

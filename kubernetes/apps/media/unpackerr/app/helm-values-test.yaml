@@ -1,0 +1,42 @@
+﻿controllers:
+  unpackerr:
+    strategy: Recreate
+    initContainers:
+      init-config:
+        image:
+          repository: docker.io/library/busybox
+          tag: "1.38"
+        command:
+          - sh
+          - -c
+          - mkdir -p /config && chown 1000:1000 /config
+        securityContext:
+          runAsUser: 0
+          runAsNonRoot: false
+    containers:
+      app:
+        image:
+          repository: ghcr.io/unpackerr/unpackerr
+          tag: v1.0.0
+        env:
+          TZ: Europe/Stockholm
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+    service:
+      app:
+        controller: unpackerr
+        forceRename: unpackerr
+        ports:
+          http:
+            port: 5656
+    persistence:
+      config:
+        existingClaim: unpackerr
+        advancedMounts:
+          unpackerr:
+            init-config:
+              - path: /config
+            app:
+              - path: /config

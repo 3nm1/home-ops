@@ -7,6 +7,8 @@ spec:
   dependsOn:
     - name: external-secrets-stores
       namespace: external-secrets
+    - name: longhorn
+      namespace: flux-system
     - name: sonarr
     - name: sonarr4k
     - name: radarr

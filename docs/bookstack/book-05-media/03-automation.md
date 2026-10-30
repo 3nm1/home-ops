@@ -31,7 +31,9 @@ Triggar Jellyfin scan när ny media landar — snabbare än schemalagd scan.
 
 ## Unpackerr
 
-Extraherar RAR/zip efter Sabnzbd — körs som intern tjänst.
+Extraherar RAR/zip efter Sabnzbd. Kör **v1** med Web UI på `unpackerr.${SECRET_DOMAIN}` (Authentik forward-auth), Longhorn `/config`, och Prometheus `/metrics` med API-nyckel från 1Password (`unpackerr` → `METRICS_API_KEY`, 60–150 tecken). Nyckeln ska ha rollen `metrics` (permission `system:metrics:read`), inte permission som rollnamn.
+
+UI-auth: `webauth:X-authentik-username` + `upstreams` (`10.42.0.0/16`) — inte `noauth` (då blir det “Logins Disabled” / gruppmatchning). Lämna `ui_role_header` tom så proxy-användare blir admin. Om du tidigare testat `noauth` och `/config/unpackerr.conf` sparade `ui_role_header`, ta bort den raden eller radera config-filen och starta om podden.
 
 ## Apprise
 
