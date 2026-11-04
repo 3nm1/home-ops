@@ -54,7 +54,7 @@ Grafana-admin: 1Password-item `grafana` → ExternalSecret.
 |----------|-------|
 | GitOps | `kubernetes/apps/observability/uptime-kuma/` |
 | URL | `https://uptime-kuma.engstrom.live` |
-| Image | `louislam/uptime-kuma:2` |
+| Image | `louislam/uptime-kuma:2.5.9` (pin i Git; uppgradera via HelmRelease — inte Kuma UI-knappen) |
 | Data | Longhorn PVC → `/app/data` |
 
 Migrerad från **docker-sandbox** aug 2026. Docker-sandbox kör inte längre parallell Prometheus/Grafana/Uptime Kuma.
