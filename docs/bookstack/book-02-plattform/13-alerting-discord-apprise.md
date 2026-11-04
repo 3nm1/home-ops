@@ -93,29 +93,88 @@ Alertmanager använder **Discord native** (pålitligt). Apprise samlar övriga k
 
 **Uppdatering av Kuma i klustret:** använd **inte** knappen *Ny uppdatering* i UI — den uppdaterar bara inuti containern och passar inte GitOps. Bumpa **image tag** i HelmRelease → Flux reconcile (se nedan).
 
-### Grupper i UI (v2.x)
+### Grupper i UI (v2.5 — svenska etiketter)
 
-I Uptime Kuma 2.x finns **två** sätt att strukturera — lätt att blanda ihop:
+I v2.x är **grupp = en egen monitor-typ**, inte bara ett textfält. Därför hittar du ofta **inte** “Monitor Group” förrän en grupp finns — på svenska heter fältet **Övervakningsgrupp**, och innan du skapat grupper står det: *Inte tillgängligt. Skapa en gruppövervakare först.*
 
-| Begrepp | Var | Syfte |
-|---------|-----|--------|
-| **Monitor Group** | Fält **Parent Group** / **Group** när du skapar/redigerar en monitor | **Mappar i infopanelen** — kollapsbara block (t.ex. `PacketLab`, `Homelab — Kritisk`). Monitors med **samma grupptext** hamnar i samma mapp. Tomt = “ingen grupp” / root. |
-| **Taggar (Tags)** | Separat fält + filter **Taggar** i sidofältet | **Etiketter** — en monitor kan ha flera taggar (`infra`, `media`). Filtrera utan att ändra mappstruktur. |
+| Begrepp (UI sv) | Engelska / internt | Syfte |
+|-----------------|-------------------|--------|
+| **Grupp** (monitor-typ) | Type `group` | Tom “mapp”-monitor i listan — kan fällas ihop/ut |
+| **Övervakningsgrupp** | Monitor Group / parent | Vilket **Grupp**-objekt en HTTP/ping-monitor **hänger under** |
+| **Taggar** | Tags | Filter i sidofältet — oberoende av grupp |
+| **Statussidor** | Status Pages | Egen sida med utvalda monitors — inte samma som Grupp |
 
-**Praktiskt:**
+#### Så skapar du en grupp (steg för steg)
 
-1. Skapa grupp genom att sätta **Parent Group** till t.ex. `Homelab — Kritisk` på flera monitors (exakt samma stavning).
-2. Ge samma monitor **taggar** för tvärsnittsfilter (t.ex. `k8s` + `family` på Nextcloud).
-3. **Status Pages** (menyn *Statussidor*) är **inte** samma som Monitor Group — det är en **egen publik/privat sida** med utvalda monitors och egen URL.
+1. **+ Lägg till ny övervakare**
+2. **Typ:** välj **Grupp** (inte HTTP/ping).
+3. **Vänligt namn:** t.ex. `Homelab — Kritisk` → spara.
+4. Öppna en befintlig monitor (HTTP, ping, …) → scrolla till **Övervakningsgrupp** → välj gruppen i listan → spara.
+5. Upprepa steg 4 för alla monitors som ska ligga i samma mapp.
 
-Förslag på gruppnamn (parallellt med er befintliga **PacketLab**):
+**Alternativ (snabbare):** på **Infopanelen**, dra en monitor och släpp den **på** en annan monitor/grupp — då sätts överordnad grupp via drag-and-drop (samma `parent`-relation som ovan).
 
-| Monitor Group | Innehåll |
-|---------------|----------|
-| `PacketLab` | DNS, fw-core01, px-node01–04, HA, docker-sandbox (befintligt) |
-| `Homelab — Kritisk` | Auth, cloud, Jellyfin, Grafana, K8s API |
-| `Homelab — Media` | Sabnzbd, Sonarr, Radarr, Prowlarr (representanter) |
-| `Homelab — Extern` | Samma hostnames som trafik utifrån (Cloudflare/WAN) |
+**Tips:**
+
+- En **Grupp**-monitor behöver oftast **ingen URL** — den aggregerar barn. Notifiering kan sitta på **gruppen** (en Discord-larm per grupp) eller på **varje barn** (mer brus).
+- Grupper kan **nästlas** (grupp under grupp) i v2.5+.
+- **Taggar** (`infra`, `media`, …) sätter du separat — de ersätter inte Övervakningsgrupp.
+
+### Grupper och taggar (driftsatt lista)
+
+Tillgängliga **taggar:** `dns-internal`, `infra`, `servers`, `k8s`, `media`, `family`, `external`.  
+**Grupp** = fältet **Övervakningsgrupp** (kräver **Grupp**-monitorer enligt avsnittet ovan).
+
+#### Grupp-monitorer
+
+| Grupp-monitor (typ Grupp) | Innehåll |
+|---------------------------|----------|
+| `PacketLab` | *(finns)* — fw, px, HA, docker-sandbox, nas, syslog, Talos ping, DNS extern |
+| `Homelab — Kritisk` | Authentik, Internal gateway, K8s API, Longhorn, Nextcloud, Jellyfin (intern) |
+| `Homelab — Media` | Sonarr, Radarr, Prowlarr, SABnzbd |
+| `Homelab — Extern` | Jellyfin (extern), Seerr, ev. DNS extern |
+
+#### Per monitor — grupp och taggar
+
+| Monitor (vänligt namn) | Övervakningsgrupp | Taggar | Kommentar |
+|------------------------|-------------------|--------|-----------|
+| PacketLab › fw-core01 (DNS) | `PacketLab` | `dns-internal`, `infra` | |
+| PacketLab › docker-sandbox01 (ping) | `PacketLab` | `servers`, `infra` | |
+| PacketLab › ha-green01 (http) | `PacketLab` | `servers`, `infra` | |
+| PacketLab › px-node01 (ping) | `PacketLab` | `servers`, `infra` | |
+| PacketLab › px-node02 (ping) | `PacketLab` | `servers`, `infra` | |
+| PacketLab › px-node03 (ping) | `PacketLab` | `servers`, `infra` | |
+| PacketLab › px-node04 (ping) | `PacketLab` | `servers`, `infra` | |
+| Monitor: DNS extern | `PacketLab` *eller* `Homelab — Extern` | `dns-internal`, `external` | Valfritt vilken grupp |
+| nas-core01 | `PacketLab` | `servers`, `infra` | TrueNAS |
+| srv-syslog01 | `PacketLab` | `servers`, `infra` | Loki/rsyslog-VM |
+| Talos/worker | `PacketLab` | `servers`, `k8s`, `infra` | Ping worker; API separat |
+| Authentik | `Homelab — Kritisk` | `k8s`, `infra`, `external` | |
+| Internal gateway | `Homelab — Kritisk` | `k8s`, `infra` | t.ex. Grafana via internal gateway |
+| Kubernetes API | `Homelab — Kritisk` | `k8s`, `infra` | `192.168.20.150:6443` |
+| Longhorn | `Homelab — Kritisk` | `k8s`, `infra` | |
+| Nextcloud | `Homelab — Kritisk` | `k8s`, `family` | |
+| jellyfin / Jellyfin (intern) | `Homelab — Kritisk` | `k8s`, `media`, `family` | Döp om t.ex. `Jellyfin (internal)` |
+| Sonarr | `Homelab — Media` | `k8s`, `media` | |
+| Radarr | `Homelab — Media` | `k8s`, `media` | |
+| Prowlarr | `Homelab — Media` | `k8s`, `media` | |
+| SABnzbd | `Homelab — Media` | `k8s`, `media` | |
+| Jellyfin (extern) | `Homelab — Extern` | `k8s`, `media`, `external` | Döp om t.ex. `Jellyfin (extern)` |
+| Seerr | `Homelab — Extern` | `k8s`, `media`, `external` | Byt `extern` → taggen `external` |
+
+#### Tagg-regler
+
+| Tagg | Använd när |
+|------|------------|
+| `infra` | Nät, hypervisor, brandvägg, lagring, loggar, kluster-plattform |
+| `servers` | VM/fysisk utanför pod (Proxmox, NAS, syslog, sandbox) |
+| `k8s` | Tjänst i Talos/Kubernetes |
+| `media` | *arr, Sabnzbd, Jellyfin, Seerr |
+| `family` | Nextcloud, intern Jellyfin |
+| `external` | Check medvetet “utifrån” / WAN / Cloudflare |
+| `dns-internal` | DNS-checks (fw-core01, DNS extern) |
+
+**Konsekvent stavning:** använd gemener (`infra`, `servers`, `external`) — inte `Infra`, `Servers`, `extern`.
 
 ### Monitor-lista (prioritet)
 
