@@ -4,5 +4,6 @@ kind: Kustomization
 resources:
   - ./ocirepository.yaml
   - ./externalsecret.yaml
+  - ./externalsecret-alertmanager-notifications.yaml
   - ./helmrelease.yaml
   - ./httproute.yaml

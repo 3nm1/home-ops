@@ -27,6 +27,8 @@ Se även repo-root `NETWORK.md`.
 2. Tillåt explicit det som behövs
 3. IoT → aldrig LAN/Servers utan regel
 
+Suricata **IPS/IDS**, syslog till srv-syslog01 och Discord-alerts: [OPNsense IPS/IDS och loggar](04-opnsense-ips-ids-och-loggar.md).
+
 ## Kubernetes-noder
 
 Alla Talos-noder sitter på **VLAN 20** (`192.168.20.0/24`).

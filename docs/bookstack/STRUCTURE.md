@@ -108,6 +108,8 @@ Hylla: Engström Home Lab
 | `book-02-plattform/09-observability-oversikt.md` | Observability-översikt |
 | `book-02-plattform/10-central-loggning-srv-syslog01.md` | Central loggning (srv-syslog01) |
 | `book-02-plattform/11-loggrotation-och-integritet.md` | Logrotation och integritet |
+| `book-02-plattform/13-alerting-discord-apprise.md` | Alerting (Discord, Apprise, checklistor) |
+| `book-03-natverk/04-opnsense-ips-ids-och-loggar.md` | OPNsense IPS/IDS och Loki |
 | `book-03-natverk/01-vlan-opnsense.md` | VLAN och OPNsense |
 | `book-03-natverk/02-envoy-gateways.md` | Envoy Gateway |
 | `book-03-natverk/03-cloudflare-tls.md` | Cloudflare + TLS |

@@ -57,7 +57,8 @@
           "pages": [
             "09-observability-oversikt.md",
             "10-central-loggning-srv-syslog01.md",
-            "11-loggrotation-och-integritet.md"
+            "11-loggrotation-och-integritet.md",
+            "13-alerting-discord-apprise.md"
           ]
         }
       ]
@@ -77,6 +78,10 @@
         {
           "name": "Extern åtkomst",
           "pages": ["03-cloudflare-tls.md"]
+        },
+        {
+          "name": "Perimeter",
+          "pages": ["04-opnsense-ips-ids-och-loggar.md"]
         }
       ]
     },

@@ -58,7 +58,7 @@ kubectl get httproute -A
 | Uptime Kuma | `uptime-kuma.engstrom.live` | HTTP/ping-checks |
 | srv-syslog01 | VM internt `:3000` / syslog `:514` | Centrala loggar (Loki) — **inte** i klustret |
 
-Översikt: [Observability](../book-02-plattform/09-observability-oversikt.md).
+Översikt: [Observability](../book-02-plattform/09-observability-oversikt.md). Discord-alerts: [Alerting](../book-02-plattform/13-alerting-discord-apprise.md).
 
 **Loggserver nere / disk full?** → [srv-syslog01 drift](06-srv-syslog01-drift.md) (inte kluster-reboot).
 

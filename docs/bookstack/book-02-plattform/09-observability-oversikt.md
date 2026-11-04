@@ -44,7 +44,9 @@ Se [Central loggning (srv-syslog01)](10-central-loggning-srv-syslog01.md) för d
 
 Grafana-admin: 1Password-item `grafana` → ExternalSecret.
 
-**Inte i kluster-Grafana (än):** Loki-datasource från srv-syslog01. Loggsökning sker idag i **Grafana på srv-syslog01** (`:3000` internt). Framtida förbättring: lägg till Loki som datasource i kluster-Grafana.
+**Kluster-Grafana** har Loki-datasource mot `srv-syslog01.lab.engstrom.live:3100` (metrics + loggar vid incident). Dedikerad logg-Grafana på syslog-VM (`:3000`) kan finnas kvar parallellt.
+
+**Alerting:** Prometheus → Alertmanager → **Discord** (webhook i 1Password `observability-notifications`). Se [Alerting — Discord och Apprise](13-alerting-discord-apprise.md).
 
 ## Kluster — uptime (Uptime Kuma)
 
@@ -98,3 +100,5 @@ Detaljer: [Central loggning](10-central-loggning-srv-syslog01.md), [Logrotation 
 - [Logrotation och integritet](11-loggrotation-och-integritet.md)
 - Runbook: [srv-syslog01 drift](../../book-08-runbooks/06-srv-syslog01-drift.md)
 - Runbook: [Klusterhälsa](../../book-08-runbooks/02-kluster-halsa.md) (Grafana, Uptime Kuma)
+- [Alerting — Discord och Apprise](13-alerting-discord-apprise.md)
+- [OPNsense IPS/IDS och loggar](../book-03-natverk/04-opnsense-ips-ids-och-loggar.md)
