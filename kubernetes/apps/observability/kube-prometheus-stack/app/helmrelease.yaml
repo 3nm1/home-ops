@@ -32,7 +32,7 @@ spec:
               - namespace
               - alertname
         route:
-          receiver: discord
+          receiver: "null"
           group_by:
             - namespace
             - alertname
@@ -46,6 +46,12 @@ spec:
             - receiver: "null"
               matchers:
                 - alertname = InfoInhibitor
+            - receiver: "null"
+              matchers:
+                - severity = info
+            - receiver: "null"
+              matchers:
+                - alertname = CPUThrottlingHigh
             - receiver: discord
               matchers:
                 - severity =~ critical|warning

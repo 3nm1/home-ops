@@ -29,6 +29,20 @@ Samma webhook kan återanvändas i Uptime Kuma och (valfritt) manuellt i Apprise
 | `kubernetes/apps/observability/kube-prometheus-stack/app/externalsecret-alertmanager-notifications.yaml` | Webhook från 1Password |
 | `helmrelease.yaml` → `alertmanager.config` | Routing: `critical`/`warning` → Discord; `Watchdog`/`InfoInhibitor` → null |
 
+**Routing:** standard `receiver: null` — bara `severity=critical|warning` går till Discord. `info`, `Watchdog`, `CPUThrottlingHigh` (ofta brus på Postgres) tystas medvetet.
+
+### Städa brus (Nextcloud cron)
+
+`KubeJobFailed` för `nextcloud-cron-*` betyder att **gamla failed Jobs** ligger kvar. Efter felsökning:
+
+```powershell
+kubectl get jobs -n family | findstr nextcloud-cron
+kubectl delete jobs -n family --field-selector status.successful=0
+# eller: kubectl delete job nextcloud-cron-29828485 -n family
+```
+
+Fixa underliggande cron (Nextcloud `cron.php` / job manifest) så nya körningar lyckas.
+
 Efter deploy:
 
 ```bash
