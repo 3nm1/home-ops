@@ -18,6 +18,7 @@ spec:
           app:
             image:
               repository: docker.io/cloudflare/cloudflared
+              # Pin: 2026.10.7 broke origin TLS to envoy-external (Cloudflare 525). Test before bump.
               tag: 2026.10.4
             env:
               NO_AUTOUPDATE: true

@@ -125,6 +125,8 @@ spec:
           enabled: true
     prometheus:
       prometheusSpec:
+        # Used in alert GeneratorURL (Discord "Source") — must match HTTPRoute hostname.
+        externalUrl: https://prometheus.${SECRET_DOMAIN}
         externalLabels:
           cluster: kubernetes
         enableAdminAPI: true

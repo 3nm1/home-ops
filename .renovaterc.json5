@@ -296,6 +296,19 @@
       enabled: false,
     },
     {
+      description: 'cloudflared — bump manually; 2026.10.7 caused CF 525 vs HTTPS origin (envoy-external)',
+      matchFileNames: [
+        'kubernetes/apps/network/cloudflare-tunnel/**',
+      ],
+      matchDepNames: [
+        'docker.io/cloudflare/cloudflared',
+      ],
+      matchDatasources: [
+        'docker',
+      ],
+      enabled: false,
+    },
+    {
       description: 'Radarr 7 is pre-release (.NET 10) — stay on 6.x until stable',
       matchDatasources: [
         'docker',
