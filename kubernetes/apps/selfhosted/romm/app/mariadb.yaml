@@ -1,0 +1,78 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: romm-mariadb
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: romm
+  interval: 1h
+  values:
+    controllers:
+      romm-mariadb:
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: docker.io/library/mariadb
+              tag: "11"
+            env:
+              TZ: Europe/Stockholm
+              MARIADB_DATABASE: romm
+              MARIADB_USER: romm-user
+            envFrom:
+              - secretRef:
+                  name: romm-secret
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: &port 3306
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 30
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 512Mi
+    defaultPodOptions:
+      securityContext:
+        fsGroup: 999
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: romm-mariadb
+        forceRename: romm-mariadb
+        ports:
+          mysql:
+            port: *port
+    persistence:
+      config:
+        existingClaim: romm-mariadb
+        globalMounts:
+          - path: /var/lib/mysql
