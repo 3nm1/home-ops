@@ -15,7 +15,7 @@ spec:
           app:
             image:
               repository: quay.io/kernald/deduparr
-              tag: 1.2.1
+              tag: 1.2.2
             env:
               DEDUPARR_LOG_LEVEL: info
               DEDUPARR_RADARR_MOVIES_ENABLED: "true"
