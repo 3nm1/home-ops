@@ -1,0 +1,23 @@
+---
+# Publika hostnames via tunnel (CNAME → external). *arr ska inte finnas här.
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: engstrom-live-public
+spec:
+  endpoints:
+    - dnsName: "jellyfin.${SECRET_DOMAIN}"
+      recordType: CNAME
+      targets: ["external.${SECRET_DOMAIN}"]
+    - dnsName: "seerr.${SECRET_DOMAIN}"
+      recordType: CNAME
+      targets: ["external.${SECRET_DOMAIN}"]
+    - dnsName: "auth.${SECRET_DOMAIN}"
+      recordType: CNAME
+      targets: ["external.${SECRET_DOMAIN}"]
+    - dnsName: "cloud.${SECRET_DOMAIN}"
+      recordType: CNAME
+      targets: ["external.${SECRET_DOMAIN}"]
+    - dnsName: "flux-webhook.${SECRET_DOMAIN}"
+      recordType: CNAME
+      targets: ["external.${SECRET_DOMAIN}"]

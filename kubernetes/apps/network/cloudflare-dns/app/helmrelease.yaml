@@ -25,7 +25,8 @@ spec:
       - --gateway-name=envoy-external
     triggerLoopOnEvent: true
     policy: sync
-    sources: ["crd", "gateway-httproute"]
+    # Endast DNSEndpoint — gateway-httproute skapade proxied A mot 192.168.20.142 (CF 9003).
+    sources: ["crd"]
     txtPrefix: k8s.
     txtOwnerId: default
     domainFilters: ["${SECRET_DOMAIN}"]
