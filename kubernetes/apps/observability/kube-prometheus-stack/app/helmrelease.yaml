@@ -18,6 +18,9 @@ spec:
     cleanPrometheusOperatorObjectNames: true
     defaultRules:
       create: true
+      # Talos: no in-cluster apiserver metrics scrape — absent(up{job="apiserver"}) false-positives.
+      disabled:
+        KubeAPIDown: true
     alertmanager:
       enabled: true
       config:
@@ -52,6 +55,9 @@ spec:
             - receiver: "null"
               matchers:
                 - alertname = CPUThrottlingHigh
+            - receiver: "null"
+              matchers:
+                - alertname = KubeAPIDown
             - receiver: discord
               matchers:
                 - severity =~ critical|warning
@@ -111,6 +117,8 @@ spec:
           memory: 256Mi
         limits:
           memory: 512Mi
+    kubeApiServer:
+      enabled: false
     kubeControllerManager:
       enabled: false
     kubeEtcd:
