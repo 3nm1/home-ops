@@ -26,6 +26,6 @@ pipx = "1.18.7" # required:template
 "aqua:jqlang/jq" = "1.8.2"
 "aqua:kubernetes-sigs/kustomize" = "5.8.1"
 "aqua:kubernetes/kubernetes/kubectl" = "1.37.2"
-"aqua:mikefarah/yq" = "4.54.1"
+"aqua:mikefarah/yq" = "4.54.3"
 "aqua:siderolabs/talos" = "1.14.5"
 "aqua:yannh/kubeconform" = "0.8.0"
