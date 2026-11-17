@@ -8,8 +8,10 @@
     ':disableRateLimiting',
     ':semanticCommits',
   ],
-  dependencyDashboard: true,
-  dependencyDashboardTitle: 'Renovate Dashboard :robot:',
+  dependencyDashboard: {
+    enabled: true,
+    title: 'Renovate Dashboard :robot:',
+  },
   schedule: [
     'every weekend',
   ],
