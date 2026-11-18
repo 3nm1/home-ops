@@ -21,6 +21,42 @@ spec:
       # Talos: no in-cluster apiserver metrics scrape — absent(up{job="apiserver"}) false-positives.
       disabled:
         KubeAPIDown: true
+        NodeSystemSaturation: true
+      # srv-talos03 (px-node03): higher load threshold — CP + weak host, soft-tainted for scheduling.
+      custom:
+        groups:
+          - name: homelab-node
+            rules:
+              - alert: NodeSystemSaturation
+                expr: |-
+                  (
+                    node_load1{job="node-exporter"}
+                    / count without (cpu, mode) (node_cpu_seconds_total{job="node-exporter", mode="idle"})
+                  )
+                  > (
+                    4
+                    and on (instance)
+                    label_replace(node_uname_info{job="node-exporter", nodename="srv-talos03"}, "instance", "$1", "instance", "(.*)")
+                  )
+                  or (
+                    node_load1{job="node-exporter"}
+                    / count without (cpu, mode) (node_cpu_seconds_total{job="node-exporter", mode="idle"})
+                  )
+                  > (
+                    2
+                    unless on (instance)
+                    label_replace(node_uname_info{job="node-exporter", nodename="srv-talos03"}, "instance", "$1", "instance", "(.*)")
+                  )
+                for: 20m
+                labels:
+                  severity: warning
+                annotations:
+                  description: >-
+                    System load per core at {{ $labels.instance }} has been above the
+                    homelab threshold for 20 minutes (currently
+                    {{ printf "%.2f" $value }}).
+                  runbook_url: https://runbooks.prometheus-operator.dev/runbooks/node/nodesystemsaturation
+                  summary: System saturated, load per core is very high.
     alertmanager:
       enabled: true
       config:
@@ -68,6 +104,16 @@ spec:
               - webhook_url_file: /etc/alertmanager/secrets/alertmanager-notifications/discord-webhook-url
                 send_resolved: true
       alertmanagerSpec:
+        affinity: &avoidTalos03
+          nodeAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - weight: 100
+                preference:
+                  matchExpressions:
+                    - key: kubernetes.io/hostname
+                      operator: NotIn
+                      values:
+                        - srv-talos03
         secrets:
           - alertmanager-notifications
         storage:
@@ -80,6 +126,7 @@ spec:
                   storage: 1Gi
     grafana:
       enabled: true
+      affinity: *avoidTalos03
       deploymentStrategy:
         type: Recreate
       initChownData:
@@ -133,6 +180,7 @@ spec:
           enabled: true
     prometheus:
       prometheusSpec:
+        affinity: *avoidTalos03
         # Used in alert GeneratorURL (Discord "Source") — must match HTTPRoute hostname.
         externalUrl: https://prometheus.${SECRET_DOMAIN}
         externalLabels:

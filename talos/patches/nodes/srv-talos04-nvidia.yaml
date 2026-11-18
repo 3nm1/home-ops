@@ -9,4 +9,4 @@ machine:
     nvidia.com/gpu.present: "true"
     media.engstrom.live/gpu-transcode: "true"
   nodeTaints:
-    media.engstrom.live/gpu: true:NoSchedule
+    media.engstrom.live/gpu: "true:NoSchedule"

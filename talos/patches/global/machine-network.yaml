@@ -1,5 +1,6 @@
-machine:
-  network:
-    disableSearchDomain: true
-    nameservers:
-      - 192.168.20.1
+# Talos 1.14: DNS in ResolverConfig (not machine.network.nameservers).
+apiVersion: v1alpha1
+kind: ResolverConfig
+nameservers:
+  - address: 192.168.20.1
+disableSearchDomain: true
