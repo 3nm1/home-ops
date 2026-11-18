@@ -3,4 +3,4 @@ machine:
   nodeLabels:
     homelab.engstrom.live/capacity: limited
   nodeTaints:
-    homelab.engstrom.live/prefer-worker: true:PreferNoSchedule
+    homelab.engstrom.live/prefer-worker: "true:PreferNoSchedule"

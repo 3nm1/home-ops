@@ -1,6 +1,6 @@
 # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
 # Mål-Talos efter rullande nod-uppgradering (körs från Linux: just upgrade-node <ip>).
-# Talhelper 3.1.17: `genconfig` + 1.14-patchar strular — srv-talos03-taint via kubectl/talosctl patch efter uppgradering.
+# Patches under talos/patches/ are shaped for Talos 1.14 multi-doc + Talhelper 3.1.17 (see controller/cluster.yaml).
 talosVersion: v1.14.6
 # renovate: datasource=docker depName=ghcr.io/siderolabs/kubelet
 kubernetesVersion: v1.37.1
