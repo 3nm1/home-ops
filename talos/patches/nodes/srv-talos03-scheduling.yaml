@@ -1,0 +1,6 @@
+# px-node03 is the weakest hypervisor — keep etcd/API here but deprioritize bursty app pods.
+machine:
+  nodeLabels:
+    homelab.engstrom.live/capacity: limited
+  nodeTaints:
+    homelab.engstrom.live/prefer-worker: true:PreferNoSchedule
