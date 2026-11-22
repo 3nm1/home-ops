@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: caronc/apprise
-              tag: 2.1.0
+              tag: 2.2.0
             env:
               TZ: Europe/Stockholm
               APPRISE_STATEFUL_MODE: simple
