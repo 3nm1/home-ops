@@ -8,11 +8,11 @@ spec:
     - name: external-secrets-stores
       namespace: external-secrets
     - name: gpu-operator
-      namespace: flux-system
+      namespace: kube-system
     - name: longhorn
       namespace: flux-system
     - name: romm
-      namespace: flux-system
+      namespace: selfhosted
   interval: 1h
   path: ./kubernetes/apps/selfhosted/romm-streaming/app
   postBuild:
