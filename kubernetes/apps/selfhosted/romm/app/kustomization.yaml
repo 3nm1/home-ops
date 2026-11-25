@@ -7,3 +7,4 @@ resources:
   - ./mariadb.yaml
   - ./ocirepository.yaml
   - ./pvc.yaml
+  - ./streaming-configmap.yaml

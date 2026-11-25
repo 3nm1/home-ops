@@ -124,6 +124,12 @@ spec:
         existingClaim: romm-config
         globalMounts:
           - path: /romm/config
+      streaming-config:
+        type: configMap
+        name: romm-streaming-config
+        globalMounts:
+          - path: /romm/config/config.yml
+            subPath: config.yml
       # Create /mnt/Backup/roms on TrueNAS (or adjust path) before first scan
       library:
         type: nfs

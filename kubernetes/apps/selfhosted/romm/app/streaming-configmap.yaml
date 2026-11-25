@@ -1,0 +1,22 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: romm-streaming-config
+data:
+  config.yml: |
+    # Merged with other files under /romm/config on the RomM PVC.
+    # PS2 via romm-webstation (PCSX2); add ps3/rpcs3 here later if needed.
+    streaming:
+      enabled: true
+      containers:
+        - protocol: webstation
+          host: https://romm-stream.${SECRET_DOMAIN}
+          subfolder: /streaming/
+          broker_host: http://romm-webstation.selfhosted.svc.cluster.local:3000
+          label: PS2 (PCSX2)
+          library_path: /romm/library
+          platforms:
+            ps2:
+              emulator: pcsx2
+              memory_card_sync: true
