@@ -12,6 +12,7 @@ spec:
     kind: OCIRepository
     name: romm-streaming
   interval: 1h
+  timeout: 20m
   values:
     controllers:
       romm-webstation:
@@ -43,7 +44,7 @@ spec:
                     port: &port 3000
                   periodSeconds: 10
                   timeoutSeconds: 5
-                  failureThreshold: 30
+                  failureThreshold: 60
               liveness:
                 enabled: true
                 custom: true
@@ -78,10 +79,9 @@ spec:
           value: "true"
           effect: NoSchedule
       # runtimeClassName: nvidia
+      # LinuxServer s6 init (same pattern as bookstack).
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
+        runAsUser: 0
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
     service:
