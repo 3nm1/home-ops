@@ -35,6 +35,13 @@ spec:
                   secretKeyRef:
                     name: romm-secret
                     key: STREAMING_BROKER_SECRET
+            # app-template defaults runAsNonRoot/1000; Selkies/nginx init must run as root.
+            securityContext:
+              privileged: true
+              runAsUser: 0
+              runAsNonRoot: false
+              allowPrivilegeEscalation: true
+              readOnlyRootFilesystem: false
             probes:
               startup:
                 enabled: true
