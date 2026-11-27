@@ -66,8 +66,8 @@ spec:
                 cpu: 200m
                 memory: 1Gi
               limits:
+                # CPU transcode. srv-talos04's exclusive nvidia.com/gpu belongs to romm-webstation.
                 memory: 6Gi
-                nvidia.com/gpu: 1
     defaultPodOptions:
       annotations:
         backup.velero.io/backup-volumes-excludes: data,tmp,cache
@@ -78,7 +78,6 @@ spec:
           operator: Equal
           value: "true"
           effect: NoSchedule
-      runtimeClassName: nvidia
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000

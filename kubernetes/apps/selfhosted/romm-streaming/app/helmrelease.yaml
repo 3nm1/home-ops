@@ -1,8 +1,8 @@
 ---
 # RomM emulator streaming: PCSX2 (PS2) via linuxserver/webstation:romm.
 # Shares ROM NFS with RomM; broker auth uses romm-secret (STREAMING_BROKER_SECRET).
-# Default: CPU streaming on srv-talos04 (no nvidia.com/gpu) so Jellyfin can keep the GPU.
-# For GPU PCSX2: scale Jellyfin to 0, uncomment nvidia limits + runtimeClassName below, reconcile.
+# The GPU operator does not time-slice or use MPS, so nvidia.com/gpu is exclusive.
+# This pod owns the card on srv-talos04. Jellyfin stays on that node for CPU transcode.
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -31,7 +31,8 @@ spec:
               PUID: "1000"
               PGID: "1000"
               SUBFOLDER: /streaming/
-              AUTO_GPU: "false"
+              # true: use the first GPU the NVIDIA runtime mounts. false disables it.
+              AUTO_GPU: "true"
               BROKER_SECRET:
                 valueFrom:
                   secretKeyRef:
@@ -78,7 +79,7 @@ spec:
                 memory: 2Gi
               limits:
                 memory: 8Gi
-                # nvidia.com/gpu: 1
+                nvidia.com/gpu: 1
     defaultPodOptions:
       nodeSelector:
         kubernetes.io/hostname: srv-talos04
@@ -87,7 +88,7 @@ spec:
           operator: Equal
           value: "true"
           effect: NoSchedule
-      # runtimeClassName: nvidia
+      runtimeClassName: nvidia
       # LinuxServer s6 init (same pattern as bookstack).
       securityContext:
         runAsUser: 0
