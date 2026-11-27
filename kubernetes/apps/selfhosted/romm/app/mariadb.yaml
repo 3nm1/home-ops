@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: docker.io/library/mariadb
-              tag: "11"
+              tag: "13"
             env:
               TZ: Europe/Stockholm
               MARIADB_DATABASE: romm
