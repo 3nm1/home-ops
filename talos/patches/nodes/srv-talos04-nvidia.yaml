@@ -4,6 +4,11 @@ machine:
       - name: nvidia
       - name: nvidia_uvm
       - name: nvidia_drm
+        # nonfree-kmod-nvidia-lts is the 580 branch. linuxserver requires these
+        # below driver 595.80, or the modeset device never comes up headless.
+        parameters:
+          - modeset=1
+          - fbdev=1
       - name: nvidia_modeset
   nodeLabels:
     nvidia.com/gpu.present: "true"
