@@ -10,7 +10,7 @@ monorepo_root = true
 [tools]
 python = "3.15.2" # required:template
 uv = "0.13.10" # required:template
-pipx = "1.19.1" # required:template
+pipx = "1.19.2" # required:template
 "pipx:makejinja" = "2.9.2" # required:template
 "aqua:budimanjojo/talhelper" = "3.1.17"
 "aqua:casey/just" = "1.59.0"
